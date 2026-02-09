@@ -1,75 +1,56 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { SearchBar } from "@/components/datasets/SearchBar";
 import { FilterSidebar } from "@/components/datasets/FilterSidebar";
 import { DatasetCard } from "@/components/datasets/DatasetCard";
 import { Pagination } from "@/components/datasets/Pagination";
-import { mockDatasets } from "@/data/mockDatasets";
 import { HeaderSection } from "@/components/ui/molecule/HeaderSection";
+import { mockDatasets } from "@/data/mockDatasets";
+import { categories } from "@/constant/mockdata";
+
+// import Hook
+// import { useFetchDatasets } from "@/hooks/data/useFetchDatasets";
 
 const ITEMS_PER_PAGE = 6;
 
 const Datasets = () => {
-  const [searchParams] = useSearchParams();
-  const initialSearch = searchParams.get("search") || "";
-  const initialCategory = searchParams.get("category") || "";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("q") || "";
+  const categoryFilter = searchParams.get("category") || "";
+  const currentPage = parseInt(searchParams.get("page") || "1");
+  // 2. Fetching Data dengan custom hook
+  // const { data: datasets = [], isLoading } = useFetchDatasets();
 
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedFilters, setSelectedFilters] = useState<
-    Record<string, string[]>
-  >({
-    Category: initialCategory ? [initialCategory] : [],
-    Agency: [],
-    Year: [],
-    "File Type": [],
-  });
+  // Data MOCK sementara
+  const datasets = mockDatasets;
+  const isLoading = false;
 
-  const handleFilterChange = (section: string, value: string) => {
-    setSelectedFilters((prev) => {
-      const current = prev[section] || [];
-      const updated = current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value];
-      return { ...prev, [section]: updated };
-    });
-    setCurrentPage(1);
-  };
-
-  const handleClearFilters = () => {
-    setSelectedFilters({
-      Category: [],
-      Agency: [],
-      Year: [],
-      "File Type": [],
-    });
-    setCurrentPage(1);
-  };
-
+  //Logika Filtering Data
   const filteredDatasets = useMemo(() => {
-    return mockDatasets.filter((dataset) => {
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const matchesSearch =
-          dataset.title.toLowerCase().includes(query) ||
-          dataset.description.toLowerCase().includes(query) ||
-          dataset.agency.toLowerCase().includes(query);
-        if (!matchesSearch) return false;
-      }
+    return datasets.filter((dataset) => {
+      const matchesSearch =
+        !searchQuery ||
+        dataset.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        dataset.agency.toLowerCase().includes(searchQuery.toLowerCase());
 
-      if (selectedFilters.Category.length > 0) {
-        if (!selectedFilters.Category.includes(dataset.category)) return false;
-      }
+      const matchesCategory =
+        !categoryFilter || dataset.category === categoryFilter;
 
-      if (selectedFilters["File Type"].length > 0) {
-        if (!selectedFilters["File Type"].includes(dataset.fileType))
-          return false;
-      }
-
-      return true;
+      return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedFilters]);
+  }, [datasets, searchQuery, categoryFilter]);
+
+  // Fungsi untuk memperbarui parameter pencarian di URL
+  const updateParams = (newParams: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams);
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    });
+    params.set("page", "1"); // Reset ke halaman 1 saat filter/search berubah
+    setSearchParams(params);
+  };
 
   const totalPages = Math.ceil(filteredDatasets.length / ITEMS_PER_PAGE);
   const paginatedDatasets = filteredDatasets.slice(
@@ -77,46 +58,54 @@ const Datasets = () => {
     currentPage * ITEMS_PER_PAGE,
   );
 
+  const categories = useMemo(() => {
+    const uniqueCategories = Array.from(
+      new Set(datasets.map((d) => d.category)),
+    );
+    return uniqueCategories;
+  }, [datasets]);
+
   return (
     <Layout>
-      {/* Header */}
       <HeaderSection
         title="Dataset"
-        description="Jelajahi semua dataset publik yang tersedia dari instansi pemerintah Tubaba. Akses informasi yang andal dan terbaru untuk penelitian dan analisis."
+        description="Jelajahi semua dataset publik Tubaba."
       />
 
-      <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           <FilterSidebar
-            selectedFilters={selectedFilters}
-            onFilterChange={handleFilterChange}
-            onClearFilters={handleClearFilters}
+            categories={categories}
+            selectedFilters={{
+              Category: categoryFilter ? [categoryFilter] : [],
+            }}
+            onFilterChange={(_, value) => updateParams({ category: value })}
+            onClearFilters={() => setSearchParams({})}
           />
 
           <div className="flex-1">
             <SearchBar
               value={searchQuery}
-              onChange={(value) => {
-                setSearchQuery(value);
-                setCurrentPage(1);
-              }}
+              onChange={(val) => updateParams({ q: val })}
               resultCount={filteredDatasets.length}
             />
 
-            <div className="grid sm:grid-cols-2 gap-4 md:gap-5 mt-4 md:mt-6">
-              {paginatedDatasets.map((dataset) => (
-                <DatasetCard key={dataset.id} dataset={dataset} />
-              ))}
-            </div>
-
-            {filteredDatasets.length === 0 && (
-              <div className="text-center py-12 md:py-16">
-                <p className="text-muted-foreground text-base md:text-lg">
-                  Tidak ditemukan dataset yang sesuai dengan kriteria Anda.
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Coba sesuaikan pencarian atau filter Anda.
-                </p>
+            {/* Handling Loading & Empty State */}
+            {isLoading ? (
+              <div className="grid sm:grid-cols-2 gap-5 mt-6 animate-pulse">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-48 bg-slate-100 rounded-3xl" />
+                ))}
+              </div>
+            ) : filteredDatasets.length > 0 ? (
+              <div className="grid sm:grid-cols-2 gap-5 mt-6">
+                {paginatedDatasets.map((dataset) => (
+                  <DatasetCard key={dataset.id} dataset={dataset} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 text-slate-400 font-tubaba italic">
+                Tidak ditemukan dataset yang sesuai kriteria pencarian Anda.
               </div>
             )}
 
@@ -124,7 +113,11 @@ const Datasets = () => {
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={setCurrentPage}
+                onPageChange={(page) => {
+                  const params = new URLSearchParams(searchParams);
+                  params.set("page", page.toString());
+                  setSearchParams(params);
+                }}
               />
             )}
           </div>

@@ -1,16 +1,7 @@
 import { useParams, Link } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { mockDatasets } from "@/data/mockDatasets";
-import {
-  ArrowLeft,
-  Download,
-  Calendar,
-  Building2,
-  FileText,
-  Eye,
-  Share2,
-  BookOpen,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowLeft, Download, Eye, Share2, ExternalLink } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -22,41 +13,20 @@ import {
 } from "@/components/index";
 import React from "react";
 import { DataPreviewTable } from "@/components/datasets/DataPreviewTable";
+import { MetadataSection } from "@/components/datasets/MetadataSection";
+import DatasetVisualization from "@/components/datasets/DatasetVisualization";
+import { ChartType, DatasetPreviewRow } from "@/types/index";
 
-interface InfoItemProps {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-}
+type TabType = "tabel" | "grafik" | "geospasial" | "metadata";
 
 interface SidebarBtnProps {
   icon: React.ElementType;
   label: string;
 }
 
-// Info item
-const InfoItem = ({ icon: Icon, label, value }: InfoItemProps) => (
-  <div className="flex items-start gap-3">
-    <div className="text-muted-foreground shrink-0 mt-1">
-      <Icon className="w-5 h-5 text-primary" />
-    </div>
-    <div className="min-w-0">
-      {" "}
-      {/* Mencegah teks meluap di mobile */}
-      <p className="text-[10px] md:text-sm font-black text-slate-900 uppercase tracking-[0.15em] font-tubaba">
-        {label}
-      </p>
-      <p className="font-bold mt-0.5 font-tubaba text-sm md:text-base text-primary leading-tight break-words">
-        {value}
-      </p>
-    </div>
-  </div>
-);
-
-// Sidebar action button
 const SidebarActionButton = ({ icon: Icon, label }: SidebarBtnProps) => (
   <Button
-    className="w-full justify-start h-11 font-tubaba text-sm md:text-large tracking-wider font-bold"
+    className="w-full justify-start h-11 font-tubaba text-sm tracking-wider font-bold"
     variant="outline"
   >
     <Icon className="w-4 h-4 mr-2 text-primary shrink-0" />
@@ -66,16 +36,22 @@ const SidebarActionButton = ({ icon: Icon, label }: SidebarBtnProps) => (
 
 const DatasetDetails = () => {
   const { id } = useParams();
-  const dataset = mockDatasets.find((d) => d.id === id);
+  const [activeTab, setActiveTab] = useState<
+    "tabel" | "grafik" | "geospasial" | "metadata"
+  >("tabel");
+  const [activeChartType, setActiveChartType] = useState<ChartType>("bar");
+
+  const dataset = useMemo(() => mockDatasets.find((d) => d.id === id), [id]);
+  const displayData = dataset?.previewData || [];
 
   if (!dataset) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold mb-4 font-tubaba">
-            Data Tidak Ditemukan
+            Dataset Tidak Ditemukan
           </h1>
-          <Link to="/datasets">
+          <Link to="/dataset">
             <Button className="font-tubaba">
               <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Daftar
             </Button>
@@ -85,20 +61,7 @@ const DatasetDetails = () => {
     );
   }
 
-  const previewData = [
-    { id: 1, kecamatan: "Tulang Bawang Tengah", populasi: 45230, luas: 234.5 },
-    { id: 2, kecamatan: "Tumijajar", populasi: 38120, luas: 189.2 },
-    { id: 3, kecamatan: "Way Kenanga", populasi: 29450, luas: 156.8 },
-    { id: 4, kecamatan: "Lambu Kibang", populasi: 25680, luas: 201.4 },
-    { id: 5, kecamatan: "Gunung Agung", populasi: 31250, luas: 178.9 },
-    { id: 6, kecamatan: "Pagar Dewa", populasi: 22340, luas: 145.3 },
-    { id: 7, kecamatan: "Gunung Terang", populasi: 28760, luas: 167.5 },
-    { id: 8, kecamatan: "Way Serdang", populasi: 19870, luas: 134.2 },
-    { id: 9, kecamatan: "Batu Putih", populasi: 17650, luas: 112.8 },
-    { id: 10, kecamatan: "Tulang Bawang Udik", populasi: 21430, luas: 198.6 },
-    { id: 11, kecamatan: "Dente Teladas", populasi: 15890, luas: 89.4 },
-    { id: 12, kecamatan: "Banjar Agung", populasi: 24560, luas: 176.2 },
-  ];
+  const hasVisualization = dataset.hasVisualization ?? false;
 
   return (
     <Layout>
@@ -137,14 +100,13 @@ const DatasetDetails = () => {
               </p>
             </div>
 
-            {/* Action Buttons  */}
-            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
-              <Button className="bg-secondary text-primary hover:bg-secondary/90 w-full lg:min-w-[180px] font-heavy font-tubaba shadow-xl py-6 md:py-4">
+            <div className="flex flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
+              <Button className="bg-secondary text-primary hover:bg-secondary/90 flex-1 lg:min-w-[180px] font-heavy font-tubaba shadow-xl py-6 md:py-4">
                 <Download className="w-4 h-4 mr-2" /> Download
               </Button>
               <Button
                 variant="outline"
-                className="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 w-full lg:min-w-[180px] font-heavy font-tubaba py-6 md:py-4"
+                className="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 flex-1 lg:min-w-[180px] font-heavy font-tubaba py-6 md:py-4"
               >
                 <Share2 className="w-4 h-4 mr-2" /> Bagikan
               </Button>
@@ -157,66 +119,85 @@ const DatasetDetails = () => {
       <main className="container mx-auto px-4 md:px-6 py-8 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
           <div className="lg:col-span-2 space-y-8 md:space-y-10">
-            {/* Dataset Information */}
-            <Card className="rounded-2xl md:rounded-3xl border-slate-200 shadow-sm overflow-hidden">
-              <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-6">
-                <CardTitle className="flex items-center gap-2 text-xs md:text-sm font-heavy font-tubaba text-slate-900 uppercase tracking-widest">
-                  <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-primary" />{" "}
-                  Informasi Dataset
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6 md:pt-8 px-4 md:px-8 pb-6 md:pb-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-                  <InfoItem
-                    icon={Building2}
-                    label="Instansi"
-                    value={dataset.agency}
-                  />
-                  <InfoItem
-                    icon={Calendar}
-                    label="Pembaruan Terakhir"
-                    value={dataset.lastUpdated}
-                  />
-                  <InfoItem
-                    icon={FileText}
-                    label="Format File"
-                    value={dataset.fileType}
-                  />
-                  <InfoItem
-                    icon={Eye}
-                    label="Jumlah Unduhan"
-                    value={dataset.downloads.toLocaleString()}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            {/* Navigasi Tab */}
+            <div className="flex items-center gap-6 border-b border-slate-100 mb-2 overflow-x-auto scrollbar-hide">
+              {["tabel", "grafik", "geospasial", "metadata"].map((tab) => {
+                if (tab === "grafik" && !hasVisualization) return null;
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab as TabType)}
+                    className={`pb-4 text-sm font-bold transition-all whitespace-nowrap capitalize ${
+                      activeTab === tab
+                        ? "border-b-2 border-primary text-primary"
+                        : "text-slate-400 hover:text-slate-600"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                );
+              })}
+            </div>
 
-            {/* Data Preview */}
-            <Card className="rounded-2xl md:rounded-3xl border-slate-200 shadow-sm overflow-hidden">
-              <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-6">
-                <CardTitle className="flex items-center gap-2 text-xs md:text-sm font-heavy font-tubaba text-slate-900 uppercase tracking-widest">
-                  <Eye className="w-4 h-4 md:w-5 md:h-5 text-primary" />{" "}
-                  Pratinjau Data
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-5 md:pt-8 md:px-8 md:pb-8">
-                <div className="w-full overflow-x-auto scrollbar-hide">
-                  <div className="min-w-[600px] md:min-w-full">
-                    {" "}
-                    <DataPreviewTable data={previewData} />
+            <div className="space-y-8">
+              {activeTab === "tabel" && (
+                <Card className="rounded-2xl md:rounded-3xl border-slate-200 shadow-sm overflow-hidden">
+                  <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-6">
+                    <CardTitle className="flex items-center gap-2 text-xs md:text-sm font-heavy font-tubaba text-slate-900 uppercase tracking-widest">
+                      <Eye className="w-4 h-4 md:w-5 md:h-5 text-primary" />{" "}
+                      Pratinjau Data
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-5 md:p-8">
+                    {activeTab === "tabel" && (
+                      <div className="animate-in fade-in duration-500">
+                        <DataPreviewTable
+                          data={
+                            (dataset?.previewData as DatasetPreviewRow[]) || []
+                          }
+                          itemsPerPage={7}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {activeTab === "grafik" && hasVisualization && (
+                <div className="animate-in fade-in duration-500">
+                  <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-900 mb-6 font-tubaba uppercase tracking-tight">
+                      Visualisasi: {dataset.title}
+                    </h3>
+
+                    {activeTab === "grafik" && (
+                      <DatasetVisualization
+                        rawData={dataset.previewData}
+                        chartType={dataset.visualization?.type || "bar"}
+                        labelKey={dataset.visualization?.labelKey}
+                        valueKey={dataset.visualization?.valueKey}
+                      />
+                    )}
                   </div>
                 </div>
-                <div className="block md:hidden bg-slate-50 py-2 text-center border-t border-slate-100">
-                  <p className="text-[9px] uppercase font-bold text-slate-400 tracking-widest">
-                    {" "}
-                    Geser untuk melihat lebih banyak →
-                  </p>
+              )}
+
+              {activeTab === "geospasial" && (
+                <div className="animate-in fade-in duration-500 py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl text-slate-400 font-tubaba italic">
+                  Peta Geospasial Kabupaten Tulang Bawang Barat akan segera
+                  hadir.
                 </div>
-              </CardContent>
-            </Card>
+              )}
+
+              {activeTab === "metadata" && dataset.metadata && (
+                <div className="animate-in fade-in duration-500">
+                  <MetadataSection metadata={dataset.metadata} />
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Aksi Cepat */}
           <div className="space-y-6 md:space-y-8">
             <Card className="rounded-2xl md:rounded-3xl border-slate-200 shadow-sm overflow-hidden">
               <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-6">
@@ -239,4 +220,5 @@ const DatasetDetails = () => {
     </Layout>
   );
 };
+
 export default DatasetDetails;

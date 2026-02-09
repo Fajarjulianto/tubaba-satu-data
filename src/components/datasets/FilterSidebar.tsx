@@ -63,12 +63,14 @@ const filterSections: FilterSection[] = [
 ];
 
 interface FilterSidebarProps {
-  selectedFilters: Record<string, string[]>;
+  categories: string[];
+  selectedFilters: { Category: string[] };
   onFilterChange: (section: string, value: string) => void;
   onClearFilters: () => void;
 }
 
 export function FilterSidebar({
+  categories,
   selectedFilters,
   onFilterChange,
   onClearFilters,

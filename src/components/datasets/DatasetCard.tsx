@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Calendar, Building2, ArrowRight, FileType } from "lucide-react";
 import { Badge, Button } from "@/components/index";
-import { Dataset, fileTypeIcons, fileTypeColors } from "@/types/dataset";
+import { Dataset, fileTypeIcons, fileTypeColors } from "@/types/index";
 
 interface DatasetCardProps {
   dataset: Dataset;
