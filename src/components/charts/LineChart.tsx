@@ -7,7 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { ChartDataItem } from "@/types/chart"; // Pastikan path benar
+import { ChartDataItem } from "@/types/index";
 
 interface LineChartProps {
   data: ChartDataItem[];

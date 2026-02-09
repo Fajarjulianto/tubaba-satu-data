@@ -6,7 +6,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { ChartDataItem } from "@/types/chart"; // Pastikan path benar
+import { ChartDataItem } from "@/types/index";
 
 interface PieChartProps {
   data: ChartDataItem[];
@@ -20,7 +20,7 @@ const PIE_COLORS = [
   "#475569",
   "#94A3B8",
   "#A3B18A",
-]; // Maroon, Gold, dan warna netral lainnya
+]; // warna pie
 
 export function PieChartComponent({ data, title }: PieChartProps) {
   if (!data || data.length === 0) {

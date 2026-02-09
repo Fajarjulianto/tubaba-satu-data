@@ -15,9 +15,10 @@ import React from "react";
 import { DataPreviewTable } from "@/components/datasets/DataPreviewTable";
 import { MetadataSection } from "@/components/datasets/MetadataSection";
 import DatasetVisualization from "@/components/datasets/DatasetVisualization";
-import { ChartType, DatasetPreviewRow } from "@/types/index";
+import { DatasetPreviewRow } from "@/types/index";
 
-type TabType = "tabel" | "grafik" | "geospasial" | "metadata";
+const TABS = ["tabel", "grafik", "geospasial", "metadata"] as const;
+type TabType = (typeof TABS)[number];
 
 interface SidebarBtnProps {
   icon: React.ElementType;
@@ -36,23 +37,19 @@ const SidebarActionButton = ({ icon: Icon, label }: SidebarBtnProps) => (
 
 const DatasetDetails = () => {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState<
-    "tabel" | "grafik" | "geospasial" | "metadata"
-  >("tabel");
-  const [activeChartType, setActiveChartType] = useState<ChartType>("bar");
+  const [activeTab, setActiveTab] = useState<TabType>("tabel");
 
   const dataset = useMemo(() => mockDatasets.find((d) => d.id === id), [id]);
-  const displayData = dataset?.previewData || [];
 
   if (!dataset) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold mb-4 font-tubaba">
+          <h1 className="text-2xl font-bold mb-4 font-tubaba text-slate-900">
             Dataset Tidak Ditemukan
           </h1>
           <Link to="/dataset">
-            <Button className="font-tubaba">
+            <Button className="font-tubaba bg-primary text-white">
               <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Daftar
             </Button>
           </Link>
@@ -118,15 +115,15 @@ const DatasetDetails = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 md:px-6 py-8 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
-          <div className="lg:col-span-2 space-y-8 md:space-y-10">
+          <div className="lg:col-span-2 space-y-8">
             {/* Navigasi Tab */}
             <div className="flex items-center gap-6 border-b border-slate-100 mb-2 overflow-x-auto scrollbar-hide">
-              {["tabel", "grafik", "geospasial", "metadata"].map((tab) => {
+              {TABS.map((tab) => {
                 if (tab === "grafik" && !hasVisualization) return null;
                 return (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab as TabType)}
+                    onClick={() => setActiveTab(tab)}
                     className={`pb-4 text-sm font-bold transition-all whitespace-nowrap capitalize ${
                       activeTab === tab
                         ? "border-b-2 border-primary text-primary"
@@ -139,7 +136,8 @@ const DatasetDetails = () => {
               })}
             </div>
 
-            <div className="space-y-8">
+            {/* Content Area */}
+            <div className="animate-in fade-in duration-500">
               {activeTab === "tabel" && (
                 <Card className="rounded-2xl md:rounded-3xl border-slate-200 shadow-sm overflow-hidden">
                   <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-6">
@@ -149,55 +147,42 @@ const DatasetDetails = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-5 md:p-8">
-                    {activeTab === "tabel" && (
-                      <div className="animate-in fade-in duration-500">
-                        <DataPreviewTable
-                          data={
-                            (dataset?.previewData as DatasetPreviewRow[]) || []
-                          }
-                          itemsPerPage={7}
-                        />
-                      </div>
-                    )}
+                    <DataPreviewTable
+                      data={(dataset.previewData as DatasetPreviewRow[]) || []}
+                      itemsPerPage={7}
+                    />
                   </CardContent>
                 </Card>
               )}
 
               {activeTab === "grafik" && hasVisualization && (
-                <div className="animate-in fade-in duration-500">
-                  <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
-                    <h3 className="text-lg font-bold text-slate-900 mb-6 font-tubaba uppercase tracking-tight">
-                      Visualisasi: {dataset.title}
-                    </h3>
-
-                    {activeTab === "grafik" && (
-                      <DatasetVisualization
-                        rawData={dataset.previewData}
-                        chartType={dataset.visualization?.type || "bar"}
-                        labelKey={dataset.visualization?.labelKey}
-                        valueKey={dataset.visualization?.valueKey}
-                      />
-                    )}
-                  </div>
+                <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+                  <h3 className="text-lg font-bold text-slate-900 mb-6 font-tubaba uppercase tracking-tight">
+                    Visualisasi: {dataset.title}
+                  </h3>
+                  <DatasetVisualization
+                    rawData={dataset.previewData || []}
+                    chartType={dataset.visualization?.type || "bar"}
+                    labelKey={dataset.visualization?.labelKey || "kecamatan"}
+                    valueKey={dataset.visualization?.valueKey || "populasi"}
+                  />
                 </div>
               )}
 
               {activeTab === "geospasial" && (
-                <div className="animate-in fade-in duration-500 py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl text-slate-400 font-tubaba italic">
+                <div className="py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl text-slate-400 font-tubaba italic">
                   Peta Geospasial Kabupaten Tulang Bawang Barat akan segera
                   hadir.
                 </div>
               )}
 
               {activeTab === "metadata" && dataset.metadata && (
-                <div className="animate-in fade-in duration-500">
-                  <MetadataSection metadata={dataset.metadata} />
-                </div>
+                <MetadataSection metadata={dataset.metadata} />
               )}
             </div>
           </div>
 
-          {/* Sidebar Aksi Cepat */}
+          {/* Sidebar */}
           <div className="space-y-6 md:space-y-8">
             <Card className="rounded-2xl md:rounded-3xl border-slate-200 shadow-sm overflow-hidden">
               <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-6">

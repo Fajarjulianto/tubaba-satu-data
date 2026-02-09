@@ -1,4 +1,4 @@
-import { Dataset } from "@/types/dataset";
+import { Dataset } from "@/types/index";
 
 export const mockDatasets: Dataset[] = [
   {

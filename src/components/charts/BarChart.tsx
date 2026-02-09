@@ -7,14 +7,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { ChartDataItem } from "@/types/chart"; // Pastikan path benar
+import { ChartDataItem } from "@/types/index";
 
 interface BarChartProps {
   data: ChartDataItem[];
   title?: string;
 }
 
-const COLORS = ["#800000", "#D4AF37"]; // Maroon dan Gold
+const COLORS = ["#800000", "#D4AF37"];
 
 export function BarChartComponent({ data, title }: BarChartProps) {
   if (!data || data.length === 0) {

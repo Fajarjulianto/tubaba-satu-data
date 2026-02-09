@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { SearchBar } from "@/components/datasets/SearchBar";
-import { FilterSidebar } from "@/components/datasets/FilterSidebar";
 import { DatasetCard } from "@/components/datasets/DatasetCard";
 import { Pagination } from "@/components/datasets/Pagination";
 import { HeaderSection } from "@/components/ui/molecule/HeaderSection";
 import { mockDatasets } from "@/data/mockDatasets";
-import { categories } from "@/constant/mockdata";
+import { FilterSidebar } from "@/components/datasets/FilterSidebar";
+import { DatasetCardSkeleton } from "@/components/datasets/DataSetCardSkeleton";
 
 // import Hook
 // import { useFetchDatasets } from "@/hooks/data/useFetchDatasets";
@@ -19,12 +19,13 @@ const Datasets = () => {
   const searchQuery = searchParams.get("q") || "";
   const categoryFilter = searchParams.get("category") || "";
   const currentPage = parseInt(searchParams.get("page") || "1");
-  // 2. Fetching Data dengan custom hook
-  // const { data: datasets = [], isLoading } = useFetchDatasets();
 
   // Data MOCK sementara
   const datasets = mockDatasets;
   const isLoading = false;
+
+  // 2. Fetching Data dengan custom hook
+  // const { data: datasets = [], isLoading } = useFetchDatasets();
 
   //Logika Filtering Data
   const filteredDatasets = useMemo(() => {
@@ -58,13 +59,6 @@ const Datasets = () => {
     currentPage * ITEMS_PER_PAGE,
   );
 
-  const categories = useMemo(() => {
-    const uniqueCategories = Array.from(
-      new Set(datasets.map((d) => d.category)),
-    );
-    return uniqueCategories;
-  }, [datasets]);
-
   return (
     <Layout>
       <HeaderSection
@@ -75,11 +69,14 @@ const Datasets = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <FilterSidebar
-            categories={categories}
+            allDatasets={mockDatasets}
             selectedFilters={{
               Category: categoryFilter ? [categoryFilter] : [],
             }}
-            onFilterChange={(_, value) => updateParams({ category: value })}
+            onFilterChange={(_, value) => {
+              const newValue = categoryFilter === value ? null : value;
+              updateParams({ category: newValue });
+            }}
             onClearFilters={() => setSearchParams({})}
           />
 

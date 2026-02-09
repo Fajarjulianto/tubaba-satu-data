@@ -5,7 +5,7 @@ import { Dataset } from "@/types/index";
 /**
  * Hook untuk fetching dataset menggunakan Axios & TanStack Query
  */
-export const useFetchDatas = () => {
+export const useFetchDatasets = () => {
   return useQuery<Dataset[]>({
     queryKey: ["datasets"],
     queryFn: async () => {
