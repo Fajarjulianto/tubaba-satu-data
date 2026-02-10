@@ -1,10 +1,9 @@
 import { DatasetCardSkeleton } from "@/components/datasets/DataSetCardSkeleton";
-import { DatasetCard } from "@/components/datasets/DatasetCard"; // Pastikan import komponen Card asli
+import { DatasetCard } from "@/components/datasets/DatasetCard";
 import { useFetchDatasets } from "@/hooks/data/useFetchDatasets";
-import { useToast } from "@/hooks/use-toast"; // Contoh jika menggunakan Shadcn/UI toast
 
 const TestPage = () => {
-  const toast = useToast();
+  // const toast = useToast();
 
   // 1. Penggunaan properti isFetching, isError, dan refetch
   const {

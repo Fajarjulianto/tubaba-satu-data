@@ -1,8 +1,5 @@
-import { Dataset } from "@/types/dataset";
+import { Dataset } from "@/types/index";
 
-/**
- * Fungsi untuk mengunduh data dalam format CSV
- */
 export const handleDownloadCSV = (dataset: Dataset): void => {
   try {
     console.log(`Memulai unduhan CSV untuk: ${dataset.title}`);
@@ -25,17 +22,11 @@ export const handleDownloadCSV = (dataset: Dataset): void => {
   }
 };
 
-/**
- * Fungsi untuk mengunduh data dalam format Excel (Simulasi XLSX)
- */
 export const handleDownloadExcel = (dataset: Dataset): void => {
   console.log(`Memicu unduhan Excel untuk: ${dataset.title}`);
   alert(`File Excel ${dataset.title}.xlsx sedang disiapkan...`);
 };
 
-/**
- * Fungsi untuk berbagi dataset menggunakan Web Share API
- */
 export const handleShare = async (dataset: Dataset): Promise<void> => {
   const shareData = {
     title: `Satu Data Tubaba - ${dataset.title}`,

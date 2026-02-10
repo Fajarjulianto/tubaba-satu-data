@@ -43,3 +43,9 @@ export {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";

@@ -1,58 +1,56 @@
-import React from "react";
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { Bell, User, Search } from "lucide-react";
+import { Menu, Search, Bell, User } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface AdminLayoutProps {
-  children: React.ReactNode;
-}
+export function AdminLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
-      {/* Sidebar Statis di Kiri */}
-      <AdminSidebar />
+      {/* Sidebar: Desktop Mini & Mobile Hidden */}
+      <AdminSidebar isOpen={isSidebarOpen} />
 
-      <div className="flex-1 flex flex-col">
-        {/* Topbar / Header Admin */}
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
-          {/* Search Bar Sederhana untuk Admin */}
-          <div className="relative w-96 hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Cari fitur atau data..."
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-primary transition-all"
-            />
+      {/* Main Content Area */}
+      <div
+        className={cn(
+          "flex-1 flex flex-col transition-all duration-300 ease-in-out",
+          isSidebarOpen ? "lg:ml-64" : "lg:ml-20 ml-0", // Desktop sisa 20 (ikon), Mobile sisa 0
+        )}
+      >
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 sticky top-0 z-40">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <Menu size={20} className="text-slate-600" />
+            </button>
           </div>
 
-          {/* Admin Profile & Notifications */}
-          <div className="flex items-center gap-5">
-            <button className="p-2.5 rounded-xl bg-slate-50 text-slate-500 hover:text-primary transition-colors relative">
-              <Bell size={20} />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-            </button>
-            <div className="h-8 w-px bg-slate-200" />
-            <div className="flex items-center gap-3 pl-2">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-tubaba-bold text-slate-900 leading-none">
-                  Admin Diskominfo
-                </p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1 font-bold">
-                  Super Admin
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border-2 border-white shadow-sm">
-                <User className="w-5 h-5 text-primary" />
-              </div>
-            </div>
+          <div className="flex items-center gap-4">
+            <Search
+              size={18}
+              className="text-slate-400 cursor-pointer md:hidden"
+            />
+            <Bell size={18} className="text-slate-400 cursor-pointer" />
+            <div className="w-8 h-8 rounded-full bg-slate-200 border border-white" />
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="p-8">
-          <div className="animate-in fade-in duration-500">{children}</div>
+        <main className="p-6">
+          <Outlet />
         </main>
       </div>
+
+      {/* Overlay Mobile: Muncul hanya saat sidebar terbuka di layar kecil */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 }

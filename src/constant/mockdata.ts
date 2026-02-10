@@ -307,3 +307,23 @@ export const faqs = [
       "Jika Anda menemukan kesalahan dalam dataset, silakan gunakan formulir umpan balik di halaman Kontak atau email kami langsung. Sertakan nama dataset, kesalahan spesifik, dan informasi pendukung.",
   },
 ];
+
+export const INSTANSI_OPTIONS = [
+  { value: "diskominfo", label: "Diskominfo Tubaba" },
+  { value: "bappeda", label: "Bappeda Tubaba" },
+  { value: "dinkes", label: "Dinas Kesehatan" },
+  { value: "disdik", label: "Dinas Pendidikan" },
+  { value: "pariwisata", label: "Dinas Pariwisata" },
+  { value: "setda", label: "Sekretariat Daerah" },
+];
+
+export const KATEGORI_OPTIONS = [
+  { value: "sosial", label: "Sosial & Budaya" },
+  { value: "ekonomi", label: "Ekonomi & Keuangan" },
+  { value: "kependudukan", label: "Kependudukan" },
+  { value: "infrastruktur", label: "Infrastruktur" },
+  { value: "pemerintahan", label: "Pemerintahan" },
+  { value: "kesehatan", label: "Kesehatan" },
+];
+
+export const TAHUN_OPTIONS = ["2026", "2025", "2024", "2023", "2022", "2021"];

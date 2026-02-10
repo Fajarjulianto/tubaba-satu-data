@@ -1,81 +1,85 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
-  UploadCloud,
   Database,
   Settings,
-  ClipboardList,
-  ChevronLeft,
   ArrowLeft,
+  UploadCloud,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Menu Admin
-const adminMenus = [
-  { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
+const menus = [
+  { name: "Dashboard", icon: LayoutDashboard, href: "/admin" },
   { name: "Upload Data", icon: UploadCloud, href: "/admin/upload" },
   { name: "Kelola Dataset", icon: Database, href: "/admin/datasets" },
-  { name: "Pengaturan API", icon: Settings, href: "/admin/settings" },
-  { name: "Log Aktivitas", icon: ClipboardList, href: "/admin/logs" },
+  { name: "Pengaturan", icon: Settings, href: "/admin/settings" },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ isOpen }: { isOpen: boolean }) {
   const location = useLocation();
 
   return (
-    <aside className="w-64 h-screen bg-white border-r border-slate-200 flex flex-col sticky top-0">
-      {/* Header Panel */}
-      <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-            <Database className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-tubaba-heavy text-slate-900 text-lg uppercase tracking-tight">
-            Admin Panel
-          </span>
-        </div>
-        <button className="text-slate-400 hover:text-primary transition-colors">
-          <ChevronLeft size={20} />
-        </button>
+    <aside
+      className={cn(
+        "fixed left-0 top-0 h-screen bg-white border-r border-slate-200 transition-all duration-300 z-50 flex flex-col overflow-hidden",
+        isOpen
+          ? "w-64 translate-x-0"
+          : "lg:w-20 lg:translate-x-0 -translate-x-full w-0",
+      )}
+    >
+      {/* Logo Section */}
+      <div className="h-16 flex items-center px-6 border-b border-slate-50 shrink-0">
+        <span
+          className={cn(
+            "ml-3 font-bold text-slate-900 transition-opacity duration-300",
+            !isOpen && "lg:opacity-0",
+          )}
+        ></span>
       </div>
 
-      {/* Navigation Menus */}
-      <nav className="flex-1 p-4 space-y-2">
-        {adminMenus.map((menu) => {
-          const isActive = location.pathname === menu.href;
+      {/* Navigasi */}
+      <nav className="flex-1 p-3 space-y-2">
+        {menus.map((item) => {
+          const active = location.pathname === item.href;
           return (
             <Link
-              key={menu.name}
-              to={menu.href}
+              key={item.name}
+              to={item.href}
               className={cn(
-                "flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-tubaba-bold transition-all duration-200 group",
-                isActive
+                "flex items-center rounded-xl transition-all duration-200",
+                isOpen
+                  ? "px-4 py-3 justify-start"
+                  : "lg:py-3 lg:justify-center p-0",
+                active
                   ? "bg-primary text-white shadow-md shadow-primary/20"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-primary",
+                  : "text-slate-500 hover:bg-slate-50",
               )}
             >
-              <menu.icon
+              <item.icon size={20} className="shrink-0" />
+              <span
                 className={cn(
-                  "w-5 h-5 shrink-0",
-                  isActive
-                    ? "text-white"
-                    : "text-slate-400 group-hover:text-primary",
+                  "ml-3 text-sm font-bold transition-all duration-300 whitespace-nowrap",
+                  !isOpen && "lg:hidden",
                 )}
-              />
-              <span className="tracking-wide">{menu.name}</span>
+              >
+                {item.name}
+              </span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer Sidebar: Kembali ke Beranda */}
+      {/* Footer */}
       <div className="p-4 border-t border-slate-50">
         <Link
           to="/"
-          className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-tubaba-bold text-slate-500 hover:bg-red-50 hover:text-primary transition-all group"
+          className={cn(
+            "flex items-center text-slate-400 hover:text-primary transition-all",
+            isOpen ? "px-2" : "lg:justify-center",
+          )}
         >
-          <ArrowLeft className="w-5 h-5 text-slate-400 group-hover:text-primary" />
-          <span>Kembali ke Beranda</span>
+          <ArrowLeft size={18} className="shrink-0" />
+          {isOpen && <span className="ml-3 text-sm font-bold">Keluar</span>}
         </Link>
       </div>
     </aside>
