@@ -52,7 +52,7 @@ export function Footer() {
                 <Database className="w-6 h-6 text-secondary" />
               </div>
               <div className="leading-none">
-                <span className="block font-tubaba-heavy text-xl uppercase tracking-tighter">
+                <span className="block text-xl uppercase tracking-tighter">
                   Satu Data <span className="text-secondary">Tubaba</span>
                 </span>
               </div>
@@ -77,7 +77,7 @@ export function Footer() {
 
           {/* Tautan Cepat */}
           <div>
-            <h4 className="font-tubaba-bold text-secondary uppercase tracking-widest text-sm mb-6">
+            <h4 className="text-secondary uppercase tracking-widest text-sm mb-6">
               Quick Links
             </h4>
             <ul className="space-y-3">
@@ -96,7 +96,7 @@ export function Footer() {
 
           {/* Sumber Daya */}
           <div>
-            <h4 className="font-tubaba-bold text-secondary uppercase tracking-widest text-sm mb-6">
+            <h4 className="text-secondary uppercase tracking-widest text-sm mb-6">
               Resources
             </h4>
             <ul className="space-y-3">
@@ -116,7 +116,7 @@ export function Footer() {
           {/* Kontak & Login */}
           <div className="flex flex-col justify-between space-y-8">
             <div className="space-y-6">
-              <h4 className="font-tubaba-bold text-secondary uppercase tracking-widest text-sm">
+              <h4 className="text-secondary uppercase tracking-widest text-sm">
                 Hubungi Kami
               </h4>
               <ul className="space-y-4">
@@ -133,7 +133,7 @@ export function Footer() {
             <div className="pt-4 border-t border-white/5">
               <Link
                 to="/login"
-                className="w-full inline-flex items-center justify-center gap-2 bg-secondary text-primary font-tubaba-bold px-6 py-3 rounded-xl text-xs uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-black/20"
+                className="w-full inline-flex items-center justify-center gap-2 bg-secondary text-primary px-6 py-3 rounded-xl text-xs uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-black/20"
               >
                 <LogIn className="w-4 h-4" />
                 Masuk Portal
@@ -144,7 +144,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-white/5">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs  tracking-widest font-tubaba text-primary-foreground/40 text-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs  tracking-widest text-primary-foreground/40 text-center">
             <p>
               © {new Date().getFullYear()} Dinas Komunikasi dan Informatika
               Kabupaten Tulang Bawang Barat.

@@ -1,7 +1,7 @@
 import { FileText, UploadCloud, CheckCircle2, AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/index";
 
-// Data statistik berdasarkan referensi gambar
+//mockup data sementara
 const statsData = [
   {
     title: "Total Dataset",
@@ -10,7 +10,7 @@ const statsData = [
     icon: FileText,
   },
   {
-    title: "Upload Bulan Ini",
+    title: "Total Upload Bulan ini",
     value: "24",
     label: "+8 dari bulan lalu",
     icon: UploadCloud,
@@ -18,7 +18,7 @@ const statsData = [
   {
     title: "Berhasil",
     value: "142",
-    label: "91% tingkat keberhasilan",
+    label: "80% Tingkat Keberhasilan",
     icon: CheckCircle2,
   },
   {
@@ -29,7 +29,7 @@ const statsData = [
   },
 ];
 
-export function StatCards() {
+export function StatsCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {statsData.map((stat, index) => (

@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/index";
+import { UploadCard } from "../admin/UploadCard";
 
 const UploadDataAdmin = () => {
   return (
@@ -107,7 +108,8 @@ const UploadDataAdmin = () => {
       </Card>
 
       {/* Unggah File */}
-      <Card className="rounded-xl border-slate-200 shadow-sm">
+      <UploadCard />
+      {/* <Card className="rounded-xl border-slate-200 shadow-sm">
         <CardContent className="p-6 space-y-6">
           <div>
             <h2 className="text-lg font-bold text-slate-800">Unggah File</h2>
@@ -139,7 +141,7 @@ const UploadDataAdmin = () => {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Footer */}
       <div className="flex justify-end items-center gap-3 pt-4">

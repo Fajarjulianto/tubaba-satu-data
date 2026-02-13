@@ -1,4 +1,5 @@
-import { StatCards } from "@/components/admin/StatsCard";
+import { StatsCards } from "@/components/admin/StatsCards";
+import UploadCard from "@/components/admin/UploadCard";
 
 const AdminDashboard = () => {
   return (
@@ -10,11 +11,8 @@ const AdminDashboard = () => {
           Kelola dan unggah dataset Satu Data Tubaba
         </p>
       </div>
-
-      {/* Baris Kartu Statistik */}
-      <StatCards />
-
-      {/* Konten selanjutnya (Grafik/Tabel Terbaru) bisa di sini */}
+      <StatsCards />
+      <UploadCard />
     </div>
   );
 };
