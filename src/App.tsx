@@ -63,13 +63,13 @@ const App = () => (
               ))}
 
               {/* Route Admin*/}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="upload" element={<UploadDataAdmin />} />
-                  <Route path="datasets" element={<ManageDatasets />} />
-                </Route>
+              {/* <Route element={<ProtectedRoute />}> */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="upload" element={<UploadDataAdmin />} />
+                <Route path="datasets" element={<ManageDatasets />} />
               </Route>
+              {/* </Route> */}
 
               <Route path="*" element={<NotFound />} />
             </Routes>

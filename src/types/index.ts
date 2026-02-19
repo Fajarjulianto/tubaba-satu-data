@@ -55,7 +55,7 @@ export interface DatasetPreviewRow {
 
 // TYPE DATA UTAMA
 export interface Dataset {
-  id: string;
+  id: number;
   title: string;
   description: string;
   category: string;
@@ -68,9 +68,12 @@ export interface Dataset {
   metadata?: DatasetMetadata;
   previewData?: DatasetPreviewRow[];
   visualization?: VisualizationConfig;
+  status: "Dipublikasi" | "Draf";
 }
 
 export interface DatasetApiResponse extends Omit<Dataset, "previewData"> {
   data: Record<string, string | number | null>[]; // Data asli dari backend
   visualization: VisualizationConfig | null;
+  total: number;
+  message?: string;
 }

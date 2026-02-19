@@ -17,7 +17,6 @@ const LoginPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulasi proses login
     setTimeout(() => {
       setIsLoading(false);
       console.log("Login diakses");

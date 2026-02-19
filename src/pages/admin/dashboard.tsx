@@ -12,7 +12,6 @@ const AdminDashboard = () => {
         </p>
       </div>
       <StatsCards />
-      <UploadCard />
     </div>
   );
 };

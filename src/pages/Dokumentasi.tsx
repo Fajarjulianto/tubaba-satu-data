@@ -38,8 +38,8 @@ const Documentation = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const apiExample = `curl -X GET "https://api.satudata.tubaba.go.id/v1/datasets" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
+  const apiExample = `curl -X GET "https://api.satudata.tubaba.go.id/v1/datasets"
+  -H "Authorization: Bearer YOUR_API_KEY" 
   -H "Content-Type: application/json"`;
 
   return (

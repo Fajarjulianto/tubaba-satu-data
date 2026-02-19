@@ -1,7 +1,11 @@
 import { Card, Button, CardContent } from "@/components/index";
 import { Upload, FileText } from "lucide-react";
 
-export const UploadCard = () => {
+interface UploadCardProps {
+  onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const UploadCard = ({ onFileSelect }: UploadCardProps) => {
   return (
     <Card className="rounded-xl border-slate-200 shadow-sm">
       <CardContent className="p-6 space-y-6">
@@ -27,12 +31,18 @@ export const UploadCard = () => {
           <p className="text-[11px] text-slate-400 uppercase tracking-wider">
             Format yang didukung: .xlsx, .xls, .csv (Maks. 10MB)
           </p>
-          <Button
-            variant="outline"
-            className="bg-primary text-white hover:bg-primary/90 border-none gap-2"
-          >
-            <FileText className="w-4 h-4" /> Pilih File Excel
-          </Button>
+
+          <label className="cursor-pointer">
+            <div className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input shadow-sm h-9 px-4 py-2 bg-primary text-white hover:bg-primary/90 border-none gap-2">
+              <FileText className="w-4 h-4" /> Pilih File Excel
+            </div>
+            <input
+              type="file"
+              className="hidden"
+              onChange={onFileSelect}
+              accept=".xlsx,.xls,.csv"
+            />
+          </label>
         </div>
       </CardContent>
     </Card>
