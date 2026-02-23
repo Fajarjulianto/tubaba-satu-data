@@ -1,4 +1,3 @@
-// components/hero/HeroSection.tsx
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,14 +9,12 @@ export function HeroSection() {
 
   return (
     <section className="relative bg-primary min-h-[80vh] flex items-center justify-center py-16 md:py-28 overflow-hidden">
-      {/* Background Layer tetap di posisi absolute */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary to-primary" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
         <div className="max-w-4xl w-full">
-          {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-md text-secondary border border-secondary/20 px-4 py-2 rounded-full text-xs md:text-sm font-medium mb-8 animate-fade-in">
             <span className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
             Portal Data Resmi Kabupaten

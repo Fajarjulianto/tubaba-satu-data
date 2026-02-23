@@ -19,7 +19,6 @@ export const FileListProgress = () => {
             key={file.id}
             className="bg-white border border-slate-100 rounded-xl p-4 flex items-center gap-4 shadow-sm"
           >
-            {/* Ikon File sesuai Style Referensi */}
             <div
               className={cn(
                 "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
@@ -58,8 +57,7 @@ export const FileListProgress = () => {
                   <AlertCircle size={18} className="text-red-500" />
                 )}
               </div>
-
-              {/* Progress Bar: Menggunakan warna Primary (marun) Anda */}
+              {/* Progress Bar */}
               <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden mt-2">
                 <div
                   className={cn(

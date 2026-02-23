@@ -9,14 +9,13 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
-      {/* Sidebar: Desktop Mini & Mobile Hidden */}
       <AdminSidebar isOpen={isSidebarOpen} />
 
       {/* Main Content Area */}
       <div
         className={cn(
           "flex-1 flex flex-col transition-all duration-300 ease-in-out",
-          isSidebarOpen ? "lg:ml-64" : "lg:ml-20 ml-0", // Desktop sisa 20 (ikon), Mobile sisa 0
+          isSidebarOpen ? "lg:ml-64" : "lg:ml-20 ml-0",
         )}
       >
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 sticky top-0 z-40">
@@ -44,7 +43,6 @@ export function AdminLayout() {
         </main>
       </div>
 
-      {/* Overlay Mobile: Muncul hanya saat sidebar terbuka di layar kecil */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/20 z-40 lg:hidden"
