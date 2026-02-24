@@ -68,7 +68,7 @@ export interface Dataset {
   metadata?: DatasetMetadata;
   previewData?: DatasetPreviewRow[];
   visualization?: VisualizationConfig;
-  status: "Dipublikasi" | "Draf";
+  // status: string;
 }
 
 export interface DatasetApiResponse extends Omit<Dataset, "previewData"> {
@@ -76,4 +76,21 @@ export interface DatasetApiResponse extends Omit<Dataset, "previewData"> {
   visualization: VisualizationConfig | null;
   total: number;
   message?: string;
+}
+
+export interface ApiKeyData {
+  key: string;
+  status: "Aktif" | "Nonaktif";
+}
+
+export interface RateLimit {
+  perHour: number;
+  perDay: number;
+}
+
+export interface ApiPermission {
+  id: string;
+  label: string;
+  endpoint: string;
+  isEnabled: boolean;
 }

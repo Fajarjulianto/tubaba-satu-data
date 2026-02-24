@@ -16,7 +16,7 @@ import { DataPreviewTable } from "@/components/datasets/DataPreviewTable";
 import { MetadataSection } from "@/components/datasets/MetadataSection";
 import DatasetVisualization from "@/components/datasets/DatasetVisualization";
 import { DatasetPreviewRow } from "@/types/index";
-import { axiosInstance } from "@/lib/axios";
+import { useDatasetActions } from "@/hooks/data/useDatasetActions";
 
 const TABS = ["tabel", "grafik", "geospasial", "metadata"] as const;
 type TabType = (typeof TABS)[number];
@@ -43,56 +43,13 @@ const SidebarActionButton = ({
 
 const DatasetDetails = () => {
   const { id } = useParams();
+  const { handleDownload, handleShare } = useDatasetActions();
   const [activeTab, setActiveTab] = useState<TabType>("tabel");
-
-  const dataset = useMemo(
-    () => mockDatasets.find((d) => d.id === Number(id)),
-    [id],
-  );
-
-  //Fungsi Download dataset
-  const handleDownload = async (format: "csv" | "xlsx") => {
-    if (!dataset) return;
-    try {
-      const response = await axiosInstance.get(
-        `/datasets/${id}/download?format=${format}`,
-        {
-          responseType: "blob",
-        },
-      );
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${dataset.title}.${format}`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Gagal mengunduh file");
-    }
-  };
-
-  //Fungsi Share Dataset
-  const handleShare = async () => {
-    if (!dataset) return;
-    const shareData = {
-      title: dataset.title,
-      text: `Lihat data ${dataset.title} di Satu Data Tubaba`,
-      url: window.location.href,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.log("Batal berbagi");
-      }
-    } else {
-      await navigator.clipboard.writeText(window.location.href);
-      alert("Tautan berhasil disalin ke clipboard!");
-    }
-  };
+  const dataset = useMemo(() => {
+    if (!id) return undefined;
+    const targetId = Number(id);
+    return mockDatasets.find((d) => Number(d.id) === targetId);
+  }, [id]);
 
   if (!dataset) {
     return (
@@ -152,13 +109,13 @@ const DatasetDetails = () => {
 
             <div className="flex flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
               <Button
-                onClick={() => handleDownload("xlsx")}
+                onClick={() => handleDownload(dataset, "xlsx")}
                 className="bg-secondary text-primary hover:bg-secondary/90 flex-1 lg:min-w-[180px] font-heavy font-tubaba shadow-xl py-6 md:py-4"
               >
                 <Download className="w-4 h-4 mr-2" /> Download
               </Button>
               <Button
-                onClick={handleShare}
+                onClick={() => handleShare(dataset)}
                 variant="outline"
                 className="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 flex-1 lg:min-w-[180px] font-heavy font-tubaba py-6 md:py-4"
               >
@@ -251,12 +208,12 @@ const DatasetDetails = () => {
                 <SidebarActionButton
                   icon={Download}
                   label="Unduh CSV"
-                  onClick={() => handleDownload("csv")}
+                  onClick={() => handleDownload(dataset, "csv")}
                 />
                 <SidebarActionButton
                   icon={Download}
                   label="Unduh Excel"
-                  onClick={() => handleDownload("xlsx")}
+                  onClick={() => handleDownload(dataset, "xlsx")}
                 />
                 <SidebarActionButton
                   icon={ExternalLink}
