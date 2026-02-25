@@ -15,10 +15,9 @@ const navLinks = [
   { name: "Dataset", href: "/dataset" },
   { name: "Statistik", href: "/statistik" },
   { name: "Metadata", href: "/metadata" },
-  { name: "Analisis", href: "/analisis" },
   { name: "Organisasi", href: "/organisasi" },
-  { name: "Dokumentasi", href: "/dokumentasi" },
   { name: "Kontak", href: "/kontak" },
+  { name: "Dokumentasi", href: "/dokumentasi" },
 ];
 
 export function Header() {
@@ -48,7 +47,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.slice(0, 6).map((link) => (
+            {navLinks.slice(0, 5).map((link) => (
               <Link
                 key={link.name}
                 to={link.href}
@@ -74,9 +73,12 @@ export function Header() {
                 align="end"
                 className="bg-card border-border"
               >
-                {navLinks.slice(6).map((link) => (
+                {navLinks.slice(5).map((link) => (
                   <DropdownMenuItem key={link.name} asChild>
-                    <Link to={link.href} className="w-full">
+                    <Link
+                      to={link.href}
+                      className={`w-full ${isActive(link.href) ? "text-primary font-semibold" : ""}`}
+                    >
                       {link.name}
                     </Link>
                   </DropdownMenuItem>

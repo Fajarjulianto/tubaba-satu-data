@@ -1,10 +1,10 @@
-import { Dataset } from "@/types/index";
+import { Dataset, FileFormat } from "@/types/index";
 import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
 
 export const useDatasetActions = () => {
   // Fungsi Download
-  const handleDownload = async (dataset: Dataset, format: "csv" | "xlsx") => {
+  const handleDownload = async (dataset: Dataset, format: FileFormat) => {
     if (!dataset?.id) {
       toast.error("ID Dataset tidak valid");
       return;
@@ -16,12 +16,13 @@ export const useDatasetActions = () => {
         { responseType: "blob" },
       );
 
-      const blob = new Blob([response.data], {
-        type:
-          format === "csv"
-            ? "text/csv"
-            : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
+      const mimeTypes = {
+        csv: "text/csv",
+        xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        json: "application/json",
+      };
+
+      const blob = new Blob([response.data], { type: mimeTypes[format] });
 
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");

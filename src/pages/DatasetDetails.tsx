@@ -109,7 +109,7 @@ const DatasetDetails = () => {
 
             <div className="flex flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
               <Button
-                onClick={() => handleDownload(dataset, "xlsx")}
+                onClick={() => handleDownload(dataset, "XLSX")}
                 className="bg-secondary text-primary hover:bg-secondary/90 flex-1 lg:min-w-[180px] font-heavy font-tubaba shadow-xl py-6 md:py-4"
               >
                 <Download className="w-4 h-4 mr-2" /> Download
@@ -207,13 +207,13 @@ const DatasetDetails = () => {
               <CardContent className="pt-4 md:pt-6 space-y-3 px-4 md:px-6 pb-6">
                 <SidebarActionButton
                   icon={Download}
-                  label="Unduh CSV"
-                  onClick={() => handleDownload(dataset, "csv")}
+                  label="Unduh JSON"
+                  onClick={() => handleDownload(dataset, "JSON")}
                 />
                 <SidebarActionButton
                   icon={Download}
                   label="Unduh Excel"
-                  onClick={() => handleDownload(dataset, "xlsx")}
+                  onClick={() => handleDownload(dataset, "XLSX")}
                 />
                 <SidebarActionButton
                   icon={ExternalLink}

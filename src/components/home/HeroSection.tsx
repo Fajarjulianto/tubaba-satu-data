@@ -49,7 +49,7 @@ export function HeroSection() {
             </div>
             <Button
               type="submit"
-              className="h-14 md:h-16 px-10 bg-secondary text-primary hover:bg-secondary/90 rounded-2xl font-tubaba-bold text-lg shadow-xl transition-all active:scale-95"
+              className="h-14 md:h-16 px-10 bg-secondary text-primary hover:bg-[#d9b8b8] hover:shadow-primary/20 hover:shadow-2xl rounded-2xl font-tubaba-bold text-lg shadow-xl transition-all active:scale-95"
             >
               CARI
             </Button>

@@ -1,324 +1,270 @@
-import { useState } from "react";
-import { Layout } from "@/components/layout/Layout";
-import { cn } from "@/lib/utils";
+import { useState, useMemo } from "react";
 import {
-  BookOpen,
-  Code,
-  FileText,
-  Download,
-  ExternalLink,
-  ChevronRight,
   Search,
+  Globe,
   Copy,
   Check,
+  Key,
+  BookOpen,
+  Layers,
+  HelpCircle,
+  Download,
 } from "lucide-react";
+import { Layout } from "@/components/layout/Layout";
 import {
+  Input,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-  Button,
-  Input,
   Badge,
   Accordion,
-  AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  AccordionContent,
+  Button,
 } from "@/components/index";
-import { documentationSections, faqs } from "@/constant/mockdata";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { DocSidebar } from "@/components/documentation/docSidebar";
+import { ApiEndpointCard } from "@/components/documentation/ApiEndpointCard";
+import { QuickLinkCard } from "@/components/documentation/QuickLinkCard";
+import { docSections, apiEndpoints, faqs } from "@/data/docData";
+import { HeaderSection } from "@/components/index";
 
 const Documentation = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [activeTag, setActiveTag] = useState<string>("Semua");
+  const [baseCopied, setBaseCopied] = useState(false);
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const baseUrl = "https://api.satudata.tubaba.go.id";
+
+  // Logic: Filtering & Search
+  const filteredData = useMemo(() => {
+    const q = searchQuery.toLowerCase();
+    return {
+      endpoints: apiEndpoints.filter((e) => {
+        const matchTag = activeTag === "Semua" || e.tag === activeTag;
+        const matchSearch =
+          !q || e.path.includes(q) || e.summary.toLowerCase().includes(q);
+        return matchTag && matchSearch;
+      }),
+      faqs: faqs.filter(
+        (f) =>
+          !q ||
+          f.question.toLowerCase().includes(q) ||
+          f.answer.toLowerCase().includes(q),
+      ),
+      sections: docSections
+        .map((s) => ({
+          ...s,
+          items: s.items.filter((i) => !q || i.title.toLowerCase().includes(q)),
+        }))
+        .filter((s) => s.items.length > 0),
+    };
+  }, [searchQuery, activeTag]);
+
+  const tags = [
+    "Semua",
+    ...Array.from(new Set(apiEndpoints.map((e) => e.tag))),
+  ];
+
+  const copyBaseUrl = () => {
+    navigator.clipboard.writeText(baseUrl);
+    setBaseCopied(true);
+    toast.success("Base URL disalin!");
+    setTimeout(() => setBaseCopied(false), 2000);
   };
-
-  const apiExample = `curl -X GET "https://api.satudata.tubaba.go.id/v1/datasets"
-  -H "Authorization: Bearer YOUR_API_KEY" 
-  -H "Content-Type: application/json"`;
 
   return (
     <Layout>
-      {/* Header */}
-      <header className="bg-primary text-primary-foreground py-8 md:py-12">
-        <div className="container mx-auto px-4 md:px-6">
-          <h1 className="font-display text-3xl md:text-5xl font-bold mb-3 md:mb-4">
-            Dokumentasi
-          </h1>
-          <p className="text-base md:text-lg text-primary-foreground/80 max-w-2xl mb-6 leading-relaxed">
-            Pelajari cara mengakses, menggunakan, dan berintegrasi dengan Satu
-            Data Tubaba. Temukan panduan, referensi API, dan praktik terbaik
-            untuk bekerja dengan dataset kami.
-          </p>
+      {/* 1. Header & Search Section */}
+      <HeaderSection
+        title="Dokumentasi"
+        description="Pusat informasi teknis untuk pengembang dan masyarakat. Pelajari cara mengintegrasikan data Kabupaten Tulang Bawang Barat ke aplikasi Anda."
+      />
 
-          {/* Search Bar */}
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              placeholder="Cari dokumentasi..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 bg-card text-foreground w-full"
-            />
-          </div>
-        </div>
-      </header>
+      <main className="container mx-auto px-4 md:px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+          <DocSidebar sections={filteredData.sections} />
 
-      <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
-        {/* Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 md:gap-8">
-          {/* Sidebar Navigation */}
-          <aside className="lg:col-span-1 order-2 lg:order-1">
-            <Card className="lg:sticky lg:top-24 border-slate-200 shadow-sm">
-              <CardHeader className="p-4 border-b border-slate-50">
-                <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-400 font-tubaba">
-                  Daftar Isi
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-4">
-                <nav className="space-y-6">
-                  {documentationSections.map((section) => (
-                    <div key={section.id}>
-                      <div className="flex items-center gap-2 text-sm font-bold mb-3 text-slate-900 font-tubaba">
-                        <section.icon className="w-4 h-4 text-primary" />
-                        {section.title}
+          <div className="lg:col-span-3 space-y-16">
+            {/* 3. Quick Links (Hanya muncul saat tidak mencari) */}
+            {!searchQuery && <QuickLinkCard />}
+
+            {/* 4. Bagian Pengenalan */}
+            <section
+              id="intro"
+              className="space-y-8 animate-in fade-in duration-700"
+            >
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold text-slate-900 font-tubaba uppercase">
+                  Tentang Satu Data Tubaba
+                </h2>
+                <div className="h-1.5 w-20 bg-primary rounded-full" />
+              </div>
+              <Card className="rounded-3xl border-slate-100 shadow-sm overflow-hidden">
+                <CardContent className="p-8 md:p-10 space-y-6 text-slate-600 leading-relaxed text-lg">
+                  <p>
+                    Satu Data Tubaba merupakan portal data terbuka resmi
+                    Kabupaten Tulang Bawang Barat yang mengacu pada standar
+                    nasional metadata.
+                  </p>
+
+                  <div
+                    id="getting-started"
+                    className="grid md:grid-cols-2 gap-8 pt-6"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 font-bold text-slate-900 uppercase tracking-wider">
+                        <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                          <BookOpen size={20} />
+                        </div>
+                        Cara Memulai
                       </div>
-                      <ul className="space-y-2 ml-6">
-                        {section.items.map((item) => (
-                          <li key={item.href}>
-                            <a
-                              href={item.href}
-                              className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
-                            >
-                              <ChevronRight className="w-3 h-3 shrink-0" />
-                              {item.title}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </nav>
-              </CardContent>
-            </Card>
-          </aside>
-
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6 md:space-y-8 order-1 lg:order-2">
-            {/* Quick Links  */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[
-                {
-                  icon: BookOpen,
-                  title: "Mulai Cepat",
-                  desc: "Mulai dalam 5 menit",
-                  bg: "bg-primary/10",
-                  iconColor: "text-primary",
-                },
-                {
-                  icon: Code,
-                  title: "Dokumentasi API",
-                  desc: "Integrasi dengan API",
-                  bg: "bg-secondary/10",
-                  iconColor: "text-secondary",
-                },
-                {
-                  icon: Download,
-                  title: "Unduh SDK",
-                  desc: "SDK & alat bantu",
-                  bg: "bg-accent/30",
-                  iconColor: "text-foreground",
-                },
-              ].map((link, i) => (
-                <Card
-                  key={i}
-                  className="hover:shadow-md transition-shadow cursor-pointer border-slate-200"
-                >
-                  <CardContent className="p-4 md:p-6 flex items-center gap-4">
-                    <div
-                      className={cn(
-                        "w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center shrink-0",
-                        link.bg,
-                      )}
-                    >
-                      <link.icon
-                        className={cn("w-5 h-5 md:w-6 md:h-6", link.iconColor)}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-bold text-sm md:text-base text-slate-900 leading-tight truncate">
-                        {link.title}
-                      </h3>
-                      <p className="text-[10px] md:text-sm text-muted-foreground truncate">
-                        {link.desc}
+                      <p className="text-sm">
+                        Langsung Akses API Kami pada halaman Dokumentasi
                       </p>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Introduction Card */}
-            <Card
-              id="intro"
-              className="rounded-3xl border-slate-200 shadow-sm overflow-hidden"
-            >
-              <CardHeader className="p-5 md:p-8 bg-slate-50/50 border-b border-slate-100">
-                <CardTitle className="text-lg md:text-xl font-tubaba-heavy uppercase">
-                  Pengenalan Satu Data Tubaba
-                </CardTitle>
-                <CardDescription className="text-xs md:text-sm font-medium">
-                  Memahami portal data terintegrasi Kabupaten Tulang Bawang
-                  Barat
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-5 md:p-8 space-y-4 text-slate-600 leading-relaxed font-light text-sm md:text-base">
-                <p>
-                  Satu Data Tubaba adalah portal data terintegrasi resmi untuk
-                  Kabupaten Tulang Bawang Barat. Misi kami adalah menyediakan
-                  data terbuka, dapat diakses, dan andal untuk mendukung
-                  penelitian, pembuatan kebijakan, dan transparansi publik.
-                </p>
-                <p>
-                  Platform ini menawarkan akses ke ratusan dataset di berbagai
-                  sektor termasuk kependudukan, pendidikan, kesehatan, ekonomi,
-                  dan infrastruktur. Semua data mengikuti format standar dan
-                  skema metadata untuk integrasi dan analisis yang mudah.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* API Example Card */}
-            <Card
-              id="api"
-              className="rounded-3xl border-slate-200 shadow-sm overflow-hidden"
-            >
-              <CardHeader className="p-5 md:p-8">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <CardTitle className="text-lg md:text-xl font-tubaba-heavy uppercase">
-                      Mulai Cepat API
-                    </CardTitle>
-                    <CardDescription className="text-xs md:text-sm">
-                      Buat permintaan API pertama Anda dalam hitungan detik
-                    </CardDescription>
+                    <div className="space-y-3" id="authentication">
+                      <div className="flex items-center gap-3 font-bold text-slate-900 uppercase tracking-wider">
+                        <div className="p-2 bg-amber-100 rounded-lg text-amber-600">
+                          <Key size={20} />
+                        </div>
+                        Autentikasi
+                      </div>
+                      <p className="text-sm">
+                        Setiap request API wajib menyertakan{" "}
+                        <code className="bg-slate-100 px-1.5 py-0.5 rounded text-primary">
+                          Bearer Token
+                        </code>{" "}
+                        yang dijana melalui API Key Anda.
+                      </p>
+                    </div>
                   </div>
-                  <Badge variant="secondary" className="w-fit font-bold">
-                    v1.0
-                  </Badge>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* 5. API Explorer Section */}
+            <section id="api-overview" className="space-y-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="space-y-4">
+                  <h2 className="text-3xl font-bold text-slate-900 font-tubaba uppercase">
+                    API Reference
+                  </h2>
+                  <div className="h-1.5 w-20 bg-primary rounded-full" />
                 </div>
-              </CardHeader>
-              <CardContent className="p-5 md:p-8 pt-0">
-                <div className="relative group">
-                  <pre className="bg-slate-950 text-slate-100 p-4 md:p-6 rounded-2xl overflow-x-auto text-xs md:text-sm font-mono shadow-inner">
-                    <code>{apiExample}</code>
-                  </pre>
+                <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                  <code className="text-sm font-mono text-primary font-bold">
+                    {baseUrl}
+                  </code>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-3 right-3 text-slate-400 hover:text-white hover:bg-white/10"
-                    onClick={() => handleCopy(apiExample)}
+                    onClick={copyBaseUrl}
+                    className="h-8 w-8 text-slate-400 hover:text-primary"
                   >
-                    {copied ? (
-                      <Check className="w-4 h-4 text-emerald-400" />
+                    {baseCopied ? (
+                      <Check size={16} className="text-emerald-500" />
                     ) : (
-                      <Copy className="w-4 h-4" />
+                      <Copy size={16} />
                     )}
                   </Button>
                 </div>
-                <p className="text-xs md:text-sm text-muted-foreground mt-4 italic">
-                  Ganti{" "}
-                  <code className="bg-slate-100 text-primary px-1.5 py-0.5 rounded font-bold uppercase">
-                    YOUR_API_KEY
-                  </code>{" "}
-                  dengan API key Anda.
-                </p>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* FAQs Accordion */}
-            <Card
-              id="faq"
-              className="rounded-3xl border-slate-200 shadow-sm overflow-hidden"
-            >
-              <CardHeader className="p-5 md:p-8 bg-slate-50/50 border-b border-slate-100">
-                <CardTitle className="text-lg md:text-xl font-tubaba-heavy uppercase">
-                  FAQ
-                </CardTitle>
-                <CardDescription className="text-xs md:text-sm">
-                  Pertanyaan umum tentang penggunaan Satu Data Tubaba
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-5 md:p-8">
-                <Accordion type="single" collapsible className="w-full">
-                  {faqs.map((faq, index) => (
-                    <AccordionItem
-                      key={index}
-                      value={`item-${index}`}
-                      className="border-slate-100"
-                    >
-                      <AccordionTrigger className="text-left text-sm md:text-base font-bold text-slate-800 hover:text-primary transition-colors py-4">
+              <Card className="rounded-3xl border-none shadow-sm overflow-hidden bg-white">
+                <CardHeader className="p-8 bg-slate-50/50 border-b border-slate-100">
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => setActiveTag(tag)}
+                        className={cn(
+                          "text-xs px-5 py-2 rounded-full font-black transition-all uppercase tracking-widest",
+                          activeTag === tag
+                            ? "bg-primary text-white shadow-lg"
+                            : "bg-white text-slate-500 border border-slate-200 hover:border-primary",
+                        )}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  {filteredData.endpoints.map((endpoint, i) => (
+                    <ApiEndpointCard key={i} endpoint={endpoint} />
+                  ))}
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* 6. Panduan Pengguna */}
+            <section id="guides" className="space-y-8">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold text-slate-900 font-tubaba uppercase">
+                  Panduan Pengguna
+                </h2>
+                <div className="h-1.5 w-20 bg-primary rounded-full" />
+              </div>
+              <div className="grid md:grid-cols-2 gap-6" id="guide-download">
+                <Card className="p-6 rounded-3xl border-slate-100 hover:shadow-md transition-shadow">
+                  <Download className="w-10 h-10 text-primary mb-4" />
+                  <h4 className="font-bold text-lg mb-2">Mengunduh Dataset</h4>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Format CSV tersedia untuk pengolahan raw data, sementara
+                    XLSX cocok untuk laporan administratif.
+                  </p>
+                </Card>
+                <Card
+                  className="p-6 rounded-3xl border-slate-100 hover:shadow-md transition-shadow"
+                  id="guide-filter"
+                >
+                  <Layers className="w-10 h-10 text-secondary mb-4" />
+                  <h4 className="font-bold text-lg mb-2">Pencarian Dataset</h4>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Gunakan fitur fuzzy search untuk menemukan data berdasarkan
+                    tahun sektoral atau instansi terkait.
+                  </p>
+                </Card>
+              </div>
+            </section>
+
+            {/* 7. FAQ */}
+            <section id="faq" className="space-y-8">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold text-slate-900 font-tubaba uppercase">
+                  Bantuan & FAQ
+                </h2>
+                <div className="h-1.5 w-20 bg-primary rounded-full" />
+              </div>
+              <Accordion
+                type="single"
+                collapsible
+                className="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm"
+              >
+                {filteredData.faqs.map((faq, i) => (
+                  <AccordionItem
+                    key={i}
+                    value={`faq-${i}`}
+                    className="border-none px-4"
+                  >
+                    <AccordionTrigger className="font-bold text-slate-700 hover:text-primary py-6 text-lg hover:no-underline">
+                      <div className="flex items-center gap-3 text-left">
+                        <HelpCircle className="w-5 h-5 text-primary shrink-0" />
                         {faq.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-sm md:text-base text-slate-500 font-light leading-relaxed pb-4">
-                        {faq.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </CardContent>
-            </Card>
-
-            {/* Resources Grid */}
-            <Card className="rounded-3xl border-slate-200 shadow-sm">
-              <CardHeader className="p-5 md:p-8">
-                <CardTitle className="text-lg md:text-xl font-tubaba-heavy uppercase">
-                  Sumber Daya Tambahan
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-5 md:p-8 pt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[
-                    {
-                      title: "Panduan Pengguna (PDF)",
-                      sub: "Manual lengkap",
-                      icon: FileText,
-                      action: Download,
-                    },
-                    {
-                      title: "Spesifikasi API",
-                      sub: "OpenAPI 3.0",
-                      icon: Code,
-                      action: ExternalLink,
-                    },
-                  ].map((res, i) => (
-                    <a
-                      key={i}
-                      href="#"
-                      className="flex items-center gap-4 p-5 border border-slate-100 rounded-2xl hover:bg-slate-50 hover:border-primary/20 transition-all group"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
-                        <res.icon className="w-5 h-5 text-primary group-hover:text-white" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-bold text-sm text-slate-900 leading-tight">
-                          {res.title}
-                        </p>
-                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-1">
-                          {res.sub}
-                        </p>
-                      </div>
-                      <res.action className="w-4 h-4 text-slate-300 group-hover:text-primary" />
-                    </a>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-slate-600 leading-relaxed pb-8 pl-8 text-base">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </section>
           </div>
         </div>
       </main>

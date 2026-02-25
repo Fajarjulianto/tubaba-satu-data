@@ -128,17 +128,6 @@ export function Footer() {
                 <ContactItem icon={Mail} text="satudata@tubaba.go.id" />
               </ul>
             </div>
-
-            {/* Tombol Login */}
-            <div className="pt-4 border-t border-white/5">
-              <Link
-                to="/login"
-                className="w-full inline-flex items-center justify-center gap-2 bg-secondary text-primary px-6 py-3 rounded-xl text-xs uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-black/20"
-              >
-                <LogIn className="w-4 h-4" />
-                Masuk Portal
-              </Link>
-            </div>
           </div>
         </div>
 
