@@ -1,23 +1,50 @@
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Search, ArrowRight } from "lucide-react";
 import { useHeroSearch } from "@/hooks/use-hero-search";
 import { HeroStats } from "./hero/HeroStats";
+import {
+  TapisPattern,
+  TapisBorder,
+  TapisStarDivider,
+} from "@/constant/motiftapis";
 
 export function HeroSection() {
   const { query, setQuery, handleSearch } = useHeroSearch();
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <section className="relative bg-primary min-h-[80vh] flex items-center justify-center py-16 md:py-28 overflow-hidden">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary to-primary" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,168,76,0.08) 0%, transparent 70%)",
+          }}
+        />
       </div>
 
+      {/* Dekorasi tapis */}
+      <TapisPattern />
+      <TapisBorder />
+      <TapisBorder flip />
+      <div className="absolute top-[18px] left-0 w-full h-px bg-secondary/20 z-10" />
+      <div className="absolute bottom-[18px] left-0 w-full h-px bg-secondary/20 z-10" />
+
+      {/* Konten */}
       <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
         <div className="max-w-4xl w-full">
-          <div className="inline-flex items-center gap-2 bg-black/20 backdrop-blur-md text-secondary border border-secondary/20 px-4 py-2 rounded-full text-xs md:text-sm font-medium mb-8 animate-fade-in">
-            <span className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
-            Portal Data Resmi Kabupaten
+          {/* Ornamen atas judul */}
+          <div className="flex items-center justify-center gap-3 mb-4 opacity-60">
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-secondary" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <polygon
+                points="8,0 10,6 16,6 11,10 13,16 8,12 3,16 5,10 0,6 6,6"
+                fill="#C9A84C"
+              />
+            </svg>
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-secondary" />
           </div>
 
           {/* Title */}
@@ -32,30 +59,83 @@ export function HeroSection() {
             dan pembangunan berbasis data.
           </p>
 
-          {/* Search Bar */}
-          <form
-            onSubmit={handleSearch}
-            className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto w-full"
-          >
-            <div className="relative flex-1 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
-              <Input
+          {/* ── Search Bar ── */}
+          <form onSubmit={handleSearch} className="max-w-2xl mx-auto w-full">
+            <div
+              className="relative flex items-center rounded-2xl transition-all duration-300"
+              style={{
+                background: isFocused
+                  ? "rgba(255,255,255,1)"
+                  : "rgba(255,255,255,0.95)",
+                boxShadow: isFocused
+                  ? "0 0 0 3px rgba(201,168,76,0.45), 0 20px 60px rgba(0,0,0,0.35)"
+                  : "0 8px 32px rgba(0,0,0,0.25)",
+                transform: isFocused
+                  ? "translateY(-2px) scale(1.01)"
+                  : "translateY(0) scale(1)",
+              }}
+            >
+              <div className="pl-5 pr-3 shrink-0 transition-colors duration-200">
+                <Search
+                  className="w-5 h-5 transition-colors duration-200"
+                  style={{ color: isFocused ? "#6B1E2A" : "#94a3b8" }}
+                />
+              </div>
+
+              {/* Input */}
+              <input
                 type="text"
                 placeholder="Cari dataset berdasarkan kata kunci..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="pl-12 h-14 md:h-16 bg-white border-0 rounded-2xl shadow-2xl text-black focus-visible:ring-secondary w-full"
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                className="flex-1 h-14 md:h-16 bg-transparent text-slate-800 placeholder:text-slate-400 text-sm md:text-base outline-none font-medium"
               />
+              <div
+                className="w-px h-8 shrink-0 transition-all duration-200 mx-1"
+                style={{
+                  background: isFocused
+                    ? "rgba(201,168,76,0.4)"
+                    : "rgba(0,0,0,0.08)",
+                }}
+              />
+
+              <button
+                type="submit"
+                className="shrink-0 flex items-center gap-2 mx-2 px-5 md:px-7 h-10 md:h-11 rounded-xl font-bold text-sm md:text-base transition-all duration-200 active:scale-95"
+                style={{
+                  background: isFocused
+                    ? "linear-gradient(135deg, #C9A84C 0%, #b8943d 100%)"
+                    : "linear-gradient(135deg, #C9A84C 0%, #a07830 100%)",
+                  color: "#4a1018",
+                  boxShadow: isFocused
+                    ? "0 4px 16px rgba(201,168,76,0.5)"
+                    : "0 2px 8px rgba(201,168,76,0.2)",
+                }}
+              >
+                <span className="hidden sm:inline tracking-wider">CARI</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-            <Button
-              type="submit"
-              className="h-14 md:h-16 px-10 bg-secondary text-primary hover:bg-[#d9b8b8] hover:shadow-primary/20 hover:shadow-2xl rounded-2xl font-tubaba-bold text-lg shadow-xl transition-all active:scale-95"
+
+            <p
+              className="text-xs text-white/40 mt-3 transition-all duration-300"
+              style={{
+                opacity: isFocused ? 0.7 : 0,
+                transform: isFocused ? "translateY(0)" : "translateY(-4px)",
+              }}
             >
-              CARI
-            </Button>
+              Tekan Enter atau klik CARI untuk mencari dataset
+            </p>
           </form>
 
-          {/* Statistics Component */}
+          {/* Divider bintang */}
+          <div className="mt-10 mb-2">
+            <TapisStarDivider />
+          </div>
+
+          {/* Statistics */}
           <div className="w-full flex justify-center">
             <HeroStats />
           </div>

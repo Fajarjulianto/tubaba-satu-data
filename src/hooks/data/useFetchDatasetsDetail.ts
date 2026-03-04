@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
 import { Dataset, DatasetPreviewRow } from "@/types/index";
-import { deriveCategory, deriveFileType } from "@/hooks/data/useFetchDatasets";
+import { deriveCategory, deriveFileType } from "@/lib/utils";
 
 interface ApiDetailData {
   id: number;

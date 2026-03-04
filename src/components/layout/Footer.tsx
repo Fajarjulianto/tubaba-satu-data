@@ -8,9 +8,13 @@ import {
   Twitter,
   Instagram,
   Youtube,
-  LogIn,
   LucideIcon,
 } from "lucide-react";
+import {
+  TapisPattern,
+  TapisBorder,
+  TapisStarDivider,
+} from "@/constant/motiftapis";
 
 interface FooterLink {
   name: string;
@@ -42,8 +46,13 @@ const SOCIAL_ICONS: LucideIcon[] = [Facebook, Twitter, Instagram, Youtube];
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground border-t border-white/5">
-      <div className="container mx-auto px-6 py-12 md:py-16">
+    <footer className="relative bg-primary text-primary-foreground border-t border-white/5 overflow-hidden">
+      <TapisPattern />
+      <TapisBorder />
+      <div className="absolute top-[18px] left-0 w-full h-px bg-secondary/20 z-10" />
+
+      {/* Konten footer */}
+      <div className="relative z-10 container mx-auto px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand & Sosial Media */}
           <div className="space-y-6">
@@ -113,7 +122,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Kontak & Login */}
+          {/* Kontak */}
           <div className="flex flex-col justify-between space-y-8">
             <div className="space-y-6">
               <h4 className="text-secondary uppercase tracking-widest text-sm">
@@ -132,19 +141,17 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/5">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs  tracking-widest text-primary-foreground/40 text-center">
-            <p>
-              © {new Date().getFullYear()} Dinas Komunikasi dan Informatika
-              Kabupaten Tulang Bawang Barat.
-            </p>
-            <p>
-              Powered by&nbsp;
-              <span className="text-secondary font-bold">
-                Satu Data Indonesia
-              </span>
-            </p>
-          </div>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs tracking-widest text-primary-foreground/40 text-center">
+          <p>
+            © {new Date().getFullYear()} Dinas Komunikasi dan Informatika
+            Kabupaten Tulang Bawang Barat.
+          </p>
+          <p>
+            Powered by&nbsp;
+            <span className="text-secondary font-bold">
+              Satu Data Indonesia
+            </span>
+          </p>
         </div>
       </div>
     </footer>

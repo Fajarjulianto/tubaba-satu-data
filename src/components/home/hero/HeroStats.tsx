@@ -5,7 +5,7 @@ const STATS = [
 ];
 
 export const HeroStats = () => (
-  <div className="flex flex-wrap gap-6 md:gap-12 mt-12 pt-8 border-t border-white/10">
+  <div className="flex flex-wrap gap-6 md:gap-12 pt-8">
     {STATS.map((stat) => (
       <div key={stat.label} className="text-left group">
         <div className="text-2xl md:text-4xl font-tubaba-heavy text-secondary group-hover:scale-105 transition-transform">
