@@ -5,12 +5,8 @@ import { SearchBar } from "@/components/datasets/SearchBar";
 import { DatasetCard } from "@/components/datasets/DatasetCard";
 import { Pagination } from "@/components/datasets/Pagination";
 import { HeaderSection } from "@/components/ui/molecule/HeaderSection";
-import { mockDatasets } from "@/data/mockDatasets";
 import { FilterSidebar } from "@/components/datasets/FilterSidebar";
-import { DatasetCardSkeleton } from "@/components/datasets/DataSetCardSkeleton";
-
-// import Hook
-// import { useFetchDatasets } from "@/hooks/data/useFetchDatasets";
+import { useFetchDatasets } from "@/hooks/data/useFetchDatasets";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -20,14 +16,10 @@ const Datasets = () => {
   const categoryFilter = searchParams.get("category") || "";
   const currentPage = parseInt(searchParams.get("page") || "1");
 
-  // Data MOCK sementara
-  const datasets = mockDatasets;
-  const isLoading = false;
+  // Fetch semua dataset dari semua OPD
+  const { data: datasets = [], isLoading } = useFetchDatasets();
 
-  // 2. Fetching Data dengan custom hook
-  // const { data: datasets = [], isLoading } = useFetchDatasets();
-
-  //Logika Filtering Data
+  // Logika Filtering Data
   const filteredDatasets = useMemo(() => {
     return datasets.filter((dataset) => {
       const matchesSearch =
@@ -49,7 +41,7 @@ const Datasets = () => {
       if (value) params.set(key, value);
       else params.delete(key);
     });
-    params.set("page", "1"); // Reset ke halaman 1 saat filter/search berubah
+    params.set("page", "1");
     setSearchParams(params);
   };
 
@@ -69,7 +61,7 @@ const Datasets = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <FilterSidebar
-            allDatasets={mockDatasets}
+            allDatasets={datasets}
             selectedFilters={{
               Category: categoryFilter ? [categoryFilter] : [],
             }}
@@ -97,7 +89,11 @@ const Datasets = () => {
             ) : filteredDatasets.length > 0 ? (
               <div className="grid sm:grid-cols-2 gap-5 mt-6">
                 {paginatedDatasets.map((dataset) => (
-                  <DatasetCard key={dataset.id} dataset={dataset} />
+                  <DatasetCard
+                    key={dataset.id}
+                    dataset={dataset}
+                    navigateState={{ opd: dataset.agency }}
+                  />
                 ))}
               </div>
             ) : (

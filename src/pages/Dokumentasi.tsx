@@ -79,7 +79,6 @@ const Documentation = () => {
 
   return (
     <Layout>
-      {/* 1. Header & Search Section */}
       <HeaderSection
         title="Dokumentasi"
         description="Pusat informasi teknis untuk pengembang dan masyarakat. Pelajari cara mengintegrasikan data Kabupaten Tulang Bawang Barat ke aplikasi Anda."
@@ -90,10 +89,7 @@ const Documentation = () => {
           <DocSidebar sections={filteredData.sections} />
 
           <div className="lg:col-span-3 space-y-16">
-            {/* 3. Quick Links (Hanya muncul saat tidak mencari) */}
             {!searchQuery && <QuickLinkCard />}
-
-            {/* 4. Bagian Pengenalan */}
             <section
               id="intro"
               className="space-y-8 animate-in fade-in duration-700"
@@ -107,9 +103,14 @@ const Documentation = () => {
               <Card className="rounded-3xl border-slate-100 shadow-sm overflow-hidden">
                 <CardContent className="p-8 md:p-10 space-y-6 text-slate-600 leading-relaxed text-lg">
                   <p>
-                    Satu Data Tubaba merupakan portal data terbuka resmi
-                    Kabupaten Tulang Bawang Barat yang mengacu pada standar
-                    nasional metadata.
+                    Satu Data Tubaba adalah inisiatif strategis Pemerintah
+                    Kabupaten Tulang Bawang Barat untuk mewujudkan tata kelola
+                    data yang akurat, mutakhir, terpadu, dan dapat
+                    dipertanggungjawabkan. Sebagai bagian dari implementasi
+                    kebijakan Satu Data Indonesia, portal ini berfungsi sebagai
+                    wadah tunggal bagi seluruh data sektoral yang dihasilkan
+                    oleh instansi pemerintah di lingkungan Kabupaten Tulang
+                    Bawang Barat.
                   </p>
 
                   <div
@@ -135,11 +136,11 @@ const Documentation = () => {
                         Autentikasi
                       </div>
                       <p className="text-sm">
-                        Setiap request API wajib menyertakan{" "}
+                        Setiap request API wajib menyertakan
                         <code className="bg-slate-100 px-1.5 py-0.5 rounded text-primary">
                           Bearer Token
                         </code>{" "}
-                        yang dijana melalui API Key Anda.
+                        yang dijalankan melalui API Key Anda.
                       </p>
                     </div>
                   </div>
@@ -215,8 +216,7 @@ const Documentation = () => {
                   <Download className="w-10 h-10 text-primary mb-4" />
                   <h4 className="font-bold text-lg mb-2">Mengunduh Dataset</h4>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Format CSV tersedia untuk pengolahan raw data, sementara
-                    XLSX cocok untuk laporan administratif.
+                    Sementara Format Data tersedia dalam JSON Dan XLSX
                   </p>
                 </Card>
                 <Card
@@ -226,8 +226,8 @@ const Documentation = () => {
                   <Layers className="w-10 h-10 text-secondary mb-4" />
                   <h4 className="font-bold text-lg mb-2">Pencarian Dataset</h4>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Gunakan fitur fuzzy search untuk menemukan data berdasarkan
-                    tahun sektoral atau instansi terkait.
+                    Gunakan fitur search untuk menemukan data berdasarkan tahun
+                    sektoral atau instansi terkait.
                   </p>
                 </Card>
               </div>

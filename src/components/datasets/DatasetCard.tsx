@@ -1,14 +1,22 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Calendar, Building2, ArrowRight, FileType } from "lucide-react";
 import { Badge, Button } from "@/components/index";
 import { Dataset, fileTypeIcons, fileTypeColors } from "@/types/index";
 
 interface DatasetCardProps {
   dataset: Dataset;
+  navigateState?: Record<string, unknown>;
 }
 
-export function DatasetCard({ dataset }: DatasetCardProps) {
+export function DatasetCard({ dataset, navigateState }: DatasetCardProps) {
+  const navigate = useNavigate();
   const FileIcon = fileTypeIcons[dataset.fileType] || FileType;
+
+  const handleDetail = () => {
+    navigate(`/datasets/${dataset.id}`, {
+      state: { opd: dataset.agency, ...navigateState },
+    });
+  };
 
   return (
     <article className="group bg-card border border-border rounded-xl p-4 md:p-5 hover:shadow-lg hover:border-secondary transition-all duration-300">
@@ -52,16 +60,15 @@ export function DatasetCard({ dataset }: DatasetCardProps) {
         <span className="text-xs text-muted-foreground">
           {dataset.downloads.toLocaleString()} download
         </span>
-        <Link to={`/datasets/${dataset.id}`}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-primary hover:text-primary hover:bg-burgundy-light gap-1 text-xs md:text-sm font-medium"
-          >
-            Lihat Detail
-            <ArrowRight className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-0.5 transition-transform" />
-          </Button>
-        </Link>
+        <Button
+          onClick={handleDetail}
+          variant="ghost"
+          size="sm"
+          className="text-primary hover:text-primary hover:bg-burgundy-light gap-1 text-xs md:text-sm font-medium"
+        >
+          Lihat Detail
+          <ArrowRight className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-0.5 transition-transform" />
+        </Button>
       </div>
     </article>
   );

@@ -1,9 +1,6 @@
 import { BookOpen, Code, Layers, HelpCircle } from "lucide-react";
 import { ApiEndpoint, DocSection } from "@/types/doc";
 
-/**
- * 1. Struktur Navigasi Sidebar (Lengkap)
- */
 export const docSections: DocSection[] = [
   {
     id: "intro",
@@ -41,13 +38,11 @@ export const docSections: DocSection[] = [
   },
 ];
 
-/**
- * 2. Referensi API Lengkap
- */
+//dummy api endpoint sementara
 export const apiEndpoints: ApiEndpoint[] = [
   {
     method: "POST",
-    path: "/api/v1/auth/login",
+    path: "/jumlah_opd",
     summary: "Mendapatkan Access Token",
     description:
       "Digunakan untuk menukar API Key dengan JWT Bearer Token yang diperlukan untuk request data privat.",
@@ -104,7 +99,7 @@ export const apiEndpoints: ApiEndpoint[] = [
     tag: "Kategori",
     params: [],
     response: {
-      categories: ["Kependudukan", "Kesehatan", "Ekonomi"],
+      categories: ["Kependudukan", "Kesehatan", "Ekonomi", "pendidikan"],
     },
   },
 ];
@@ -121,11 +116,11 @@ export const faqs = [
   {
     question: "Apakah ada batasan (Rate Limit)?",
     answer:
-      "Untuk akun publik, batasannya adalah 100 request per jam. Untuk instansi pemerintah (G2G), silakan hubungi Kominfo Tubaba untuk akses unlimited.",
+      "Untuk akun publik, batasannya adalah 100 request per jam. Untuk instansi pemerintah, silakan hubungi Kominfo Tubaba untuk akses unlimited.",
   },
   {
     question: "Apa format data yang didukung?",
     answer:
-      "API kami secara default mengembalikan data dalam format JSON. Namun, file fisik dataset tersedia dalam format CSV dan XLSX.",
+      "API kami secara default mengembalikan data dalam format JSON. Namun, format dataset kami tersedia dalam format CSV dan XLSX.",
   },
 ];

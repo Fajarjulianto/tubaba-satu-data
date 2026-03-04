@@ -1,6 +1,9 @@
 import { Dataset, FileFormat } from "@/types/index";
-import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
+
+// Base URL storage file dari backend
+const STORAGE_BASE_URL =
+  "https://aplikasi.tubaba.go.id/storage/disk/satu_data/import";
 
 export const useDatasetActions = () => {
   // Fungsi Download
@@ -10,34 +13,55 @@ export const useDatasetActions = () => {
       return;
     }
 
+    const fileName = dataset.metadata?.source;
+
+    if (!fileName) {
+      toast.error("File tidak tersedia untuk dataset ini");
+      return;
+    }
+
     try {
-      const response = await axiosInstance.get(
-        `/datasets/${dataset.id}/download?format=${format}`,
-        { responseType: "blob" },
-      );
+      // Untuk XLSX — langsung download dari URL storage backend
+      if (format === "XLSX") {
+        const fileUrl = `${STORAGE_BASE_URL}/${fileName}`;
+        const safeFileName = dataset.title.replace(/\s+/g, "_");
 
-      const mimeTypes = {
-        csv: "text/csv",
-        xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        json: "application/json",
-      };
+        const link = document.createElement("a");
+        link.href = fileUrl;
+        link.setAttribute("download", `${safeFileName}.xlsx`);
+        link.setAttribute("target", "_blank");
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
 
-      const blob = new Blob([response.data], { type: mimeTypes[format] });
+        toast.success("File Excel berhasil diunduh");
+        return;
+      }
 
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
+      if (format === "JSON") {
+        if (!dataset.previewData || dataset.previewData.length === 0) {
+          toast.error("Data preview tidak tersedia untuk diunduh sebagai JSON");
+          return;
+        }
 
-      const safeFileName = dataset.title.replace(/\s+/g, "_");
-      link.setAttribute("download", `${safeFileName}.${format}`);
+        const jsonContent = JSON.stringify(dataset.previewData, null, 2);
+        const blob = new Blob([jsonContent], { type: "application/json" });
+        const url = window.URL.createObjectURL(blob);
+        const safeFileName = dataset.title.replace(/\s+/g, "_");
 
-      document.body.appendChild(link);
-      link.click();
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${safeFileName}.json`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
 
-      link.remove();
-      window.URL.revokeObjectURL(url);
+        toast.success("File JSON berhasil diunduh");
+        return;
+      }
 
-      toast.success(`${format.toUpperCase()} berhasil diunduh`);
+      toast.error(`Format ${format} belum didukung`);
     } catch (error) {
       console.error("Download error:", error);
       toast.error("Gagal mengunduh file. Silakan coba lagi.");

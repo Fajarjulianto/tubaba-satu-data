@@ -1,6 +1,5 @@
-import { useParams, Link } from "react-router-dom";
-import { useMemo, useState } from "react";
-import { mockDatasets } from "@/data/mockDatasets";
+import { useParams, Link, useLocation } from "react-router-dom";
+import { useState } from "react";
 import { ArrowLeft, Download, Eye, Share2, ExternalLink } from "lucide-react";
 import {
   Card,
@@ -17,6 +16,8 @@ import { MetadataSection } from "@/components/datasets/MetadataSection";
 import DatasetVisualization from "@/components/datasets/DatasetVisualization";
 import { DatasetPreviewRow } from "@/types/index";
 import { useDatasetActions } from "@/hooks/data/useDatasetActions";
+import { useNavigate } from "react-router-dom";
+import { useFetchDatasetDetail } from "@/hooks/data/useFetchDatasetsDetail";
 
 const TABS = ["tabel", "grafik", "geospasial", "metadata"] as const;
 type TabType = (typeof TABS)[number];
@@ -42,15 +43,41 @@ const SidebarActionButton = ({
 );
 
 const DatasetDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
   const { handleDownload, handleShare } = useDatasetActions();
   const [activeTab, setActiveTab] = useState<TabType>("tabel");
-  const dataset = useMemo(() => {
-    if (!id) return undefined;
-    const targetId = Number(id);
-    return mockDatasets.find((d) => Number(d.id) === targetId);
-  }, [id]);
 
+  // Ambil opd dari navigate state yang dikirim oleh DatasetCard
+  const opd = (location.state as { opd?: string })?.opd;
+
+  const { data: dataset, isLoading } = useFetchDatasetDetail(opd, id);
+
+  // Loading State
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="animate-pulse">
+          <div className="bg-primary py-8 md:py-16">
+            <div className="container mx-auto px-4 md:px-6 space-y-4">
+              <div className="h-4 w-32 bg-primary-foreground/20 rounded-full" />
+              <div className="h-10 w-2/3 bg-primary-foreground/20 rounded-2xl" />
+              <div className="h-4 w-1/2 bg-primary-foreground/20 rounded-full" />
+            </div>
+          </div>
+          <div className="container mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="h-64 bg-slate-100 rounded-3xl" />
+            </div>
+            <div className="h-48 bg-slate-100 rounded-3xl" />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Not Found State
   if (!dataset) {
     return (
       <Layout>
@@ -218,9 +245,7 @@ const DatasetDetails = () => {
                 <SidebarActionButton
                   icon={ExternalLink}
                   label="Lihat API Endpoint"
-                  onClick={() =>
-                    window.open(`/api/v1/datasets/${id}`, "_blank")
-                  }
+                  onClick={() => navigate("/dokumentasi#api-overview")}
                 />
               </CardContent>
             </Card>

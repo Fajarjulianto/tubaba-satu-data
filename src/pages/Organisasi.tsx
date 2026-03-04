@@ -1,6 +1,9 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Search, Building2, ChevronDown, ArrowRight } from "lucide-react";
+import { Search, Building2, ArrowRight, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "@/lib/axios";
+import { useFetchDatasets } from "@/hooks/data/useFetchDatasets";
 import {
   Input,
   Layout,
@@ -12,11 +15,37 @@ import {
   SelectValue,
 } from "@/components/index";
 
-import { agencies } from "@/constant/mockdata";
-
 const Agencies = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
+
+  // Fetch daftar OPD
+  const { data: apiData, isLoading } = useQuery({
+    queryKey: ["agencies-api"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/jumlah_opd");
+      return response.data.data as Record<string, string>;
+    },
+  });
+
+  const { data: allDatasets = [] } = useFetchDatasets();
+
+  const agencies = useMemo(() => {
+    if (!apiData) return [];
+    return Object.entries(apiData).map(([id, name]) => {
+      const datasetCount = allDatasets.filter((d) => d.agency === name).length;
+      return {
+        id: parseInt(id),
+        name: name as string,
+        shortName: (name as string)
+          .split(" ")
+          .map((w) => w[0])
+          .join(""),
+        datasets: datasetCount,
+        description: "Instansi resmi Pemerintah Kabupaten Tulang Bawang Barat.",
+      };
+    });
+  }, [apiData, allDatasets]);
 
   const filteredAgencies = useMemo(() => {
     const result = agencies.filter((agency) => {
@@ -27,7 +56,6 @@ const Agencies = () => {
       );
     });
 
-    // Sort
     switch (sortBy) {
       case "name-asc":
         result.sort((a, b) => a.name.localeCompare(b.name));
@@ -35,27 +63,33 @@ const Agencies = () => {
       case "name-desc":
         result.sort((a, b) => b.name.localeCompare(a.name));
         break;
-      case "datasets-desc":
-        result.sort((a, b) => b.datasets - a.datasets);
-        break;
-      case "datasets-asc":
-        result.sort((a, b) => a.datasets - b.datasets);
-        break;
     }
 
     return result;
-  }, [searchQuery, sortBy]);
+  }, [searchQuery, sortBy, agencies]);
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <HeaderSection
+          title="Organisasi Perangkat Daerah"
+          description="Memuat data..."
+        />
+        <div className="flex justify-center py-20">
+          <Loader2 className="animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      {/* Header */}
       <HeaderSection
         title="Organisasi Perangkat Daerah"
         description="Daftar instansi pemerintah Kabupaten Tulang Bawang Barat yang berkontribusi menyediakan data pada platform Satu Data Tubaba."
       />
 
       <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
-        {/* Search and Sort */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -74,25 +108,21 @@ const Agencies = () => {
             <SelectContent className="bg-card">
               <SelectItem value="name-asc">Nama A-Z</SelectItem>
               <SelectItem value="name-desc">Nama Z-A</SelectItem>
-              <SelectItem value="datasets-desc">Dataset Terbanyak</SelectItem>
-              <SelectItem value="datasets-asc">Dataset Tersedikit</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Results Count */}
         <div className="mb-6">
           <h2 className="text-lg md:text-xl font-semibold">
             {filteredAgencies.length} Organisasi Ditampilkan
           </h2>
         </div>
 
-        {/* Agency Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {filteredAgencies.map((agency) => (
             <Link
               key={agency.id}
-              to={`/dataset?agency=${encodeURIComponent(agency.shortName)}`}
+              to={`/dataset?q=${encodeURIComponent(agency.name)}`}
               className="group bg-card border border-border rounded-xl p-5 hover:shadow-lg hover:border-secondary transition-all duration-300"
             >
               <div className="flex items-start gap-4">
@@ -118,18 +148,6 @@ const Agencies = () => {
             </Link>
           ))}
         </div>
-
-        {filteredAgencies.length === 0 && (
-          <div className="text-center py-16">
-            <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground text-lg">
-              Tidak ada organisasi ditemukan.
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Coba ubah kata kunci pencarian Anda.
-            </p>
-          </div>
-        )}
       </main>
     </Layout>
   );

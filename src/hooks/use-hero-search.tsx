@@ -8,7 +8,7 @@ export function useHeroSearch() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/dataset?search=${encodeURIComponent(query)}`);
+      navigate(`/dataset?q=${encodeURIComponent(query)}`);
     }
   };
 

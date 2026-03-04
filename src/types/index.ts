@@ -94,3 +94,16 @@ export interface ApiPermission {
   endpoint: string;
   isEnabled: boolean;
 }
+
+//type data response api
+export interface ApiDatasetItem {
+  id: number;
+  kode: string;
+  judul: string;
+  metode: string;
+  penanggungJawab: string;
+  produsen: string;
+  satuan: string;
+  tahun: string;
+  file: string;
+}
