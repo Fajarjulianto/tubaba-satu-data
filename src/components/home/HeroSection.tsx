@@ -48,12 +48,12 @@ export function HeroSection() {
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl md:text-7xl text-white mb-6 leading-[1.1] tracking-tight">
+          <h1 className="text-4xl md:text-7xl text-white mb-6 leading-[1.1] tracking-tight font-bold">
             Satu Data <span className="text-secondary">Tubaba</span>
           </h1>
 
           {/* Description */}
-          <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl font-light mx-auto">
+          <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl font-medium mx-auto">
             Portal data terpadu resmi Kabupaten Tulang Bawang Barat. Akses data
             publik yang terstruktur untuk mendukung transparansi, penelitian,
             dan pembangunan berbasis data.

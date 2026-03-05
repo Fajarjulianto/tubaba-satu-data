@@ -5,6 +5,7 @@
  * SVG pattern motif tapis Lampung — geometris emas subtle
  * Gunakan sebagai background overlay di atas warna solid
  */
+
 export const TapisPattern = () => (
   <svg
     className="absolute inset-0 w-full h-full opacity-[0.07]"

@@ -3,36 +3,37 @@
 @tailwind utilities;
 
 @layer base {
+  /* Satu font-family "Tubaba" dengan weight berbeda */
   @font-face {
-    font-family: "Tubaba-light";
+    font-family: "Tubaba";
     src: url("./assets/fonts/Tubaba-Light.ttf") format("truetype");
     font-weight: 300;
     font-style: normal;
     font-display: swap;
   }
   @font-face {
-    font-family: "Tubaba-regular";
+    font-family: "Tubaba";
     src: url("./assets/fonts/Tubaba-Regular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
   }
   @font-face {
-    font-family: "Tubaba-medium";
+    font-family: "Tubaba";
     src: url("./assets/fonts/Tubaba-Medium.ttf") format("truetype");
     font-weight: 500;
     font-style: normal;
     font-display: swap;
   }
   @font-face {
-    font-family: "Tubaba-bold";
+    font-family: "Tubaba";
     src: url("./assets/fonts/Tubaba-Bold.ttf") format("truetype");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
   }
   @font-face {
-    font-family: "Tubaba-heavy";
+    font-family: "Tubaba";
     src: url("./assets/fonts/Tubaba-Heavy.ttf") format("truetype");
     font-weight: 900;
     font-style: normal;
@@ -40,18 +41,7 @@
   }
 }
 
-@theme {
-  --font-tubaba-bold: "Tubaba-bold", sans-serif;
-  --font-tubaba-heavy: "Tubaba-heavy", sans-serif;
-  --font-tubaba-light: "Tubaba-light", sans-serif;
-  --font-tubaba-medium: "Tubaba-medium", sans-serif;
-  --font-tubaba-regular: "Tubaba-regular", sans-serif;
-}
-
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
+/* Design system tokens */
 @layer base {
   :root {
     --background: 0 0% 98%;
@@ -84,7 +74,6 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* Custom tokens for Satu Data */
     --gold: 41 46% 65%;
     --gold-light: 41 46% 85%;
     --burgundy: 353 45% 28%;
@@ -151,7 +140,6 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
   }

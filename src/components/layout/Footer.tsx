@@ -5,16 +5,12 @@ import {
   Phone,
   MapPin,
   Facebook,
-  Twitter,
   Instagram,
   Youtube,
+  Music2,
   LucideIcon,
 } from "lucide-react";
-import {
-  TapisPattern,
-  TapisBorder,
-  TapisStarDivider,
-} from "@/constant/motiftapis";
+import { TapisPattern, TapisBorder } from "@/constant/motiftapis";
 
 interface FooterLink {
   name: string;
@@ -24,6 +20,12 @@ interface FooterLink {
 interface ContactItemProps {
   icon: LucideIcon;
   text: string;
+}
+
+interface SocialLink {
+  icon: LucideIcon;
+  href: string;
+  label: string;
 }
 
 const QUICK_LINKS: FooterLink[] = [
@@ -42,16 +44,38 @@ const RESOURCES: FooterLink[] = [
   { name: "Terms of Service", href: "#" },
 ];
 
-const SOCIAL_ICONS: LucideIcon[] = [Facebook, Twitter, Instagram, Youtube];
+const SOCIAL_LINKS: SocialLink[] = [
+  {
+    icon: Facebook,
+    href: "https://www.facebook.com/kominfotubaba",
+    label: "Facebook Kominfo Tubaba",
+  },
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/diskominfotubaba/",
+    label: "Instagram Diskominfo Tubaba",
+  },
+  {
+    icon: Music2,
+    href: "https://www.tiktok.com/@diskominfotubaba",
+    label: "TikTok Diskominfo Tubaba",
+  },
+  {
+    icon: Youtube,
+    href: "https://www.youtube.com/@DiskomdigiTubaba",
+    label: "Youtube Diskoomdigi Tubaba",
+  },
+];
 
 export function Footer() {
   return (
     <footer className="relative bg-primary text-primary-foreground border-t border-white/5 overflow-hidden">
+      {/* Dekorasi tapis */}
       <TapisPattern />
       <TapisBorder />
       <div className="absolute top-[18px] left-0 w-full h-px bg-secondary/20 z-10" />
 
-      {/* Konten footer */}
+      {/* Konten */}
       <div className="relative z-10 container mx-auto px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand & Sosial Media */}
@@ -61,22 +85,25 @@ export function Footer() {
                 <Database className="w-6 h-6 text-secondary" />
               </div>
               <div className="leading-none">
-                <span className="block text-xl uppercase tracking-tighter">
+                <span className="block text-xl font-bold uppercase tracking-tighter text-white">
                   Satu Data <span className="text-secondary">Tubaba</span>
                 </span>
               </div>
             </Link>
-            <p className="text-sm text-primary-foreground/60 leading-relaxed font-light">
+            <p className="text-sm text-white leading-relaxed font-light">
               Portal data terpadu resmi Kabupaten Tulang Bawang Barat.
               Menyediakan akses data publik untuk mendukung transparansi dan
               pembangunan berbasis data.
             </p>
             <div className="flex gap-3">
-              {SOCIAL_ICONS.map((Icon, i) => (
+              {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
                 <a
-                  key={i}
-                  href="#"
-                  className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-secondary hover:text-primary transition-all active:scale-90"
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-secondary hover:text-primary transition-all duration-200 active:scale-90"
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -86,7 +113,7 @@ export function Footer() {
 
           {/* Tautan Cepat */}
           <div>
-            <h4 className="text-secondary uppercase tracking-widest text-sm mb-6">
+            <h4 className="text-secondary font-bold uppercase tracking-widest text-xs mb-6">
               Quick Links
             </h4>
             <ul className="space-y-3">
@@ -94,7 +121,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.href}
-                    className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors font-light"
+                    className="text-sm text-white hover:text-secondary hover:translate-x-1 inline-block transition-all duration-200 font-light"
                   >
                     {link.name}
                   </Link>
@@ -105,7 +132,7 @@ export function Footer() {
 
           {/* Sumber Daya */}
           <div>
-            <h4 className="text-secondary uppercase tracking-widest text-sm mb-6">
+            <h4 className="text-secondary font-bold uppercase tracking-widest text-xs mb-6">
               Resources
             </h4>
             <ul className="space-y-3">
@@ -113,7 +140,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.href}
-                    className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors font-light"
+                    className="text-sm text-white hover:text-secondary hover:translate-x-1 inline-block transition-all duration-200 font-light"
                   >
                     {link.name}
                   </Link>
@@ -123,26 +150,24 @@ export function Footer() {
           </div>
 
           {/* Kontak */}
-          <div className="flex flex-col justify-between space-y-8">
-            <div className="space-y-6">
-              <h4 className="text-secondary uppercase tracking-widest text-sm">
-                Hubungi Kami
-              </h4>
-              <ul className="space-y-4">
-                <ContactItem
-                  icon={MapPin}
-                  text="Jl. Jenderal Sudirman No.1, Panaragan Jaya, Tulang Bawang Barat, Lampung"
-                />
-                <ContactItem icon={Phone} text="(0726) 123456" />
-                <ContactItem icon={Mail} text="satudata@tubaba.go.id" />
-              </ul>
-            </div>
+          <div className="space-y-6">
+            <h4 className="text-secondary font-bold uppercase tracking-widest text-xs">
+              Hubungi Kami
+            </h4>
+            <ul className="space-y-4">
+              <ContactItem
+                icon={MapPin}
+                text="Jl. Diponegoro No. 86 Panaragan Jaya, Panaragan, Kec. Tulang Bawang Tengah"
+              />
+              <ContactItem icon={Phone} text="(0726) 123456" />
+              <ContactItem icon={Mail} text="Kominfo@tubaba.go.id" />
+            </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs tracking-widest text-primary-foreground/40 text-center">
-          <p>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs tracking-widest text-white/40 text-center mt-5">
+          <p className="text-white">
             © {new Date().getFullYear()} Dinas Komunikasi dan Informatika
             Kabupaten Tulang Bawang Barat.
           </p>
@@ -160,7 +185,7 @@ export function Footer() {
 
 function ContactItem({ icon: Icon, text }: ContactItemProps) {
   return (
-    <li className="flex items-start gap-3 text-sm text-primary-foreground/60 font-light">
+    <li className="flex items-start gap-3 text-sm text-white font-light">
       <Icon className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
       <span className="leading-snug">{text}</span>
     </li>

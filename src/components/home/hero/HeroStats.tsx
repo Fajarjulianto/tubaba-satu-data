@@ -8,7 +8,7 @@ export const HeroStats = () => (
   <div className="flex flex-wrap gap-6 md:gap-12 pt-8">
     {STATS.map((stat) => (
       <div key={stat.label} className="text-left group">
-        <div className="text-2xl md:text-4xl font-tubaba-heavy text-secondary group-hover:scale-105 transition-transform">
+        <div className="text-2xl md:text-4xl font-medium text-secondary group-hover:scale-105 transition-transform">
           {stat.value}
         </div>
         <div className="text-xs md:text-sm uppercase tracking-widest text-white/60 font-medium">

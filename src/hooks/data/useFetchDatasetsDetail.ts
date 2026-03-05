@@ -37,7 +37,6 @@ const parsePreviewData = (original: RawRow[]): DatasetPreviewRow[] => {
   const headerRow = original[0];
   if (!Array.isArray(headerRow)) return [];
   const headers = headerRow as string[];
-
   const rows: DatasetPreviewRow[] = [];
 
   for (let i = 1; i < original.length; i++) {
