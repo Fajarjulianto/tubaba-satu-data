@@ -138,7 +138,7 @@ export const agencies = [
   },
 ];
 
-// ── Kategori utama (tampil di homepage) ──
+// ── Kategori utama
 export const categories = [
   {
     name: "Geografi dan Iklim",
@@ -189,7 +189,7 @@ export const categories = [
   },
 ];
 
-// ── Kategori tambahan (tampil saat klik "Lihat semua") ──
+// ── Kategori tambahan
 export const categoriesExtra = [
   {
     name: "Pariwisata",
