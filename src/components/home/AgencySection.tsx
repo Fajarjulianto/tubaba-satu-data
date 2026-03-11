@@ -17,7 +17,7 @@ export function AgencySection() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-10">
           <h2 className="font-display text-3xl font-bold text-foreground mb-2">
-            Instansi Kontributor
+            Produsen Data
           </h2>
           <p className="text-muted-foreground">
             Institusi pemerintah yang berkolaborasi berbagi data publik melalui

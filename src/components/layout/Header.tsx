@@ -23,7 +23,6 @@ const navLinks = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-
   const isActive = (href: string) => location.pathname === href;
 
   return (
@@ -51,7 +50,7 @@ export function Header() {
               <Link
                 key={link.name}
                 to={link.href}
-                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`px-3 py-2 text-sm font-bold rounded-md transition-colors ${
                   isActive(link.href)
                     ? "bg-secondary/20 text-secondary"
                     : "text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
@@ -64,7 +63,7 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="px-3 py-2 text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                  className="px-3 py-2 text-sm font-bold text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
                 >
                   Lainnya <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
@@ -77,7 +76,7 @@ export function Header() {
                   <DropdownMenuItem key={link.name} asChild>
                     <Link
                       to={link.href}
-                      className={`w-full ${isActive(link.href) ? "text-primary font-semibold" : ""}`}
+                      className={`w-full ${isActive(link.href) ? "text-primary font-bold" : ""}`}
                     >
                       {link.name}
                     </Link>

@@ -11,6 +11,18 @@ import {
   BookOpen,
   Code,
   FileText,
+  Map,
+  Landmark,
+  Briefcase,
+  Leaf,
+  Factory,
+  Plane,
+  Truck,
+  Banknote,
+  ShoppingCart,
+  BarChart3,
+  Globe,
+  Wallet,
 } from "lucide-react";
 
 export const monthlyData = [
@@ -126,49 +138,111 @@ export const agencies = [
   },
 ];
 
+// ── Kategori utama (tampil di homepage) ──
 export const categories = [
   {
-    name: "Populasi",
-    icon: Users,
-    count: 24,
-    description: "Data demografi, sensus, dan distribusi penduduk",
+    name: "Geografi dan Iklim",
+    icon: Map,
+    count: 12,
+    description: "Data wilayah, topografi, iklim, dan lingkungan alam daerah",
+    color: "bg-teal-500/10 text-teal-600 border-teal-200",
+  },
+  {
+    name: "Pemerintahan",
+    icon: Landmark,
+    count: 20,
+    description:
+      "Data aparatur, kebijakan, anggaran, dan tata kelola pemerintah",
+    color: "bg-slate-500/10 text-slate-600 border-slate-200",
+  },
+  {
+    name: "Penduduk dan Ketenagakerjaan",
+    icon: Briefcase,
+    count: 28,
+    description:
+      "Data demografi, angkatan kerja, pengangguran, dan ketenagakerjaan",
     color: "bg-blue-500/10 text-blue-600 border-blue-200",
   },
   {
-    name: "Pendidikan",
-    icon: GraduationCap,
-    count: 18,
-    description: "Data sekolah, pendaftaran, dan kinerja pendidikan",
-    color: "bg-amber-500/10 text-amber-600 border-amber-200",
-  },
-  {
-    name: "Kesehatan",
-    icon: Heart,
-    count: 31,
+    name: "Sosial dan Kesejahteraan Rakyat",
+    icon: HandHeart,
+    count: 27,
     description:
-      "Fasilitas kesehatan, prevalensi penyakit, dan indikator kesehatan",
-    color: "bg-rose-500/10 text-rose-600 border-rose-200",
+      "Data bantuan sosial, kemiskinan, pendidikan, dan kesehatan masyarakat",
+    color: "bg-orange-500/10 text-orange-600 border-orange-200",
   },
   {
-    name: "Ekonomi",
-    icon: TrendingUp,
-    count: 42,
-    description: "Data PDRB, lapangan usaha, dan indikator ekonomi lainnya",
+    name: "Pertanian, Kehutanan, Peternakan, dan Perikanan",
+    icon: Leaf,
+    count: 22,
+    description:
+      "Data produksi pertanian, kehutanan, peternakan, dan hasil perikanan",
+    color: "bg-green-500/10 text-green-600 border-green-200",
+  },
+  {
+    name: "Industri, Pertambangan, dan Energi",
+    icon: Factory,
+    count: 14,
+    description:
+      "Data industri pengolahan, pertambangan, dan konsumsi energi daerah",
+    color: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
+  },
+];
+
+// ── Kategori tambahan (tampil saat klik "Lihat semua") ──
+export const categoriesExtra = [
+  {
+    name: "Pariwisata",
+    icon: Plane,
+    count: 9,
+    description:
+      "Data objek wisata, kunjungan wisatawan, dan akomodasi pariwisata",
+    color: "bg-sky-500/10 text-sky-600 border-sky-200",
+  },
+  {
+    name: "Transportasi dan Komunikasi",
+    icon: Truck,
+    count: 11,
+    description:
+      "Data infrastruktur transportasi, kendaraan, dan telekomunikasi",
+    color: "bg-indigo-500/10 text-indigo-600 border-indigo-200",
+  },
+  {
+    name: "Perbankan, Koperasi, dan Harga-harga",
+    icon: Banknote,
+    count: 16,
+    description: "Data perbankan, koperasi, inflasi, dan indeks harga konsumen",
     color: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
   },
   {
-    name: "Infrastruktur",
-    icon: Building,
-    count: 15,
-    description: "Jalan, jembatan, utilitas, dan data fasilitas umum",
-    color: "bg-purple-500/10 text-purple-600 border-purple-200",
+    name: "Pengeluaran Penduduk",
+    icon: Wallet,
+    count: 8,
+    description:
+      "Data konsumsi rumah tangga, pengeluaran, dan pola belanja masyarakat",
+    color: "bg-rose-500/10 text-rose-600 border-rose-200",
   },
   {
-    name: "Sosial",
-    icon: HandHeart,
-    count: 27,
-    description: "Data bantuan sosial, kemiskinan, dan program komunitas",
-    color: "bg-orange-500/10 text-orange-600 border-orange-200",
+    name: "Perdagangan",
+    icon: ShoppingCart,
+    count: 13,
+    description:
+      "Data ekspor, impor, distribusi barang, dan aktivitas perdagangan",
+    color: "bg-amber-500/10 text-amber-600 border-amber-200",
+  },
+  {
+    name: "Sistem Neraca Regional",
+    icon: BarChart3,
+    count: 10,
+    description: "Data PDRB, pertumbuhan ekonomi, dan neraca pendapatan daerah",
+    color: "bg-violet-500/10 text-violet-600 border-violet-200",
+  },
+  {
+    name: "Perbandingan Antar Kabupaten",
+    icon: Globe,
+    count: 7,
+    description: "Data komparatif lintas kabupaten/kota dan indikator regional",
+    color: "bg-cyan-500/10 text-cyan-600 border-cyan-200",
   },
 ];
 
@@ -289,22 +363,21 @@ export const faqs = [
   {
     question: "Apakah data ini gratis digunakan?",
     answer:
-      "Ya, semua dataset di Satu Data Tubaba tersedia gratis di bawah Lisensi Pemerintah Terbuka. Anda dapat menggunakan data untuk penelitian, analisis, dan tujuan komersial dengan atribusi yang tepat.",
+      "Ya, semua dataset di Satu Data Tubaba tersedia gratis di bawah Lisensi Pemerintah Terbuka.",
   },
   {
     question: "Seberapa sering data diperbarui?",
     answer:
-      "Frekuensi pembaruan bervariasi per dataset. Beberapa dataset diperbarui harian, sementara yang lain diperbarui bulanan, triwulanan, atau tahunan. Periksa metadata untuk jadwal pembaruan spesifik.",
+      "Frekuensi pembaruan bervariasi per dataset. Periksa metadata untuk jadwal pembaruan spesifik.",
   },
   {
     question: "Bisakah saya meminta data tertentu?",
-    answer:
-      "Ya, Anda dapat mengajukan permintaan data melalui halaman Kontak. Tim kami akan meninjau permintaan Anda dan bekerja sama dengan instansi terkait untuk menyediakan data jika tersedia.",
+    answer: "Ya, Anda dapat mengajukan permintaan data melalui halaman Kontak.",
   },
   {
     question: "Bagaimana cara melaporkan kesalahan data?",
     answer:
-      "Jika Anda menemukan kesalahan dalam dataset, silakan gunakan formulir umpan balik di halaman Kontak atau email kami langsung. Sertakan nama dataset, kesalahan spesifik, dan informasi pendukung.",
+      "Gunakan formulir umpan balik di halaman Kontak atau email kami langsung.",
   },
 ];
 

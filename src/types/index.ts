@@ -47,7 +47,7 @@ export interface DatasetMetadata {
 }
 
 export type TableValue = string | number | boolean | null;
-
+//untuk preview data(visualisasi tabel)
 export interface DatasetPreviewRow {
   id: number | string;
   [key: string]: TableValue;
@@ -72,7 +72,7 @@ export interface Dataset {
 }
 
 export interface DatasetApiResponse extends Omit<Dataset, "previewData"> {
-  data: Record<string, string | number | null>[]; // Data asli dari backend
+  data: Record<string, string | number | null>[]; // data dari backend
   visualization: VisualizationConfig | null;
   total: number;
   message?: string;
