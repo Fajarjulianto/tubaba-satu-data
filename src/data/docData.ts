@@ -46,7 +46,7 @@ export const apiEndpoints: ApiEndpoint[] = [
     summary: "Mendapatkan Jumlah OPD",
     description:
       "Endpoint ini mengembalikan jumlah Organisasi Perangkat Daerah (OPD) yang terdaftar di platform Satu Data Tubaba.",
-    tag: "Autentikasi",
+    tag: "Organisasi",
     params: [
       {
         name: "api_key",
@@ -57,14 +57,12 @@ export const apiEndpoints: ApiEndpoint[] = [
       },
     ],
     response: {
-      status: "success",
-      token: "eyJhbGciOiJIUzI1Ni...",
-      expires_in: 3600,
+      total_opd: 25,
     },
   },
   {
     method: "GET",
-    path: "/api/v1/datasets",
+    path: "/jumlah_data",
     summary: "List Semua Dataset",
     description:
       "Mengambil daftar dataset publik Kabupaten Tulang Bawang Barat.",

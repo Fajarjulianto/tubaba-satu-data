@@ -133,7 +133,7 @@ const Documentation = () => {
                         <div className="p-2 bg-amber-100 rounded-lg text-amber-600">
                           <Key size={20} />
                         </div>
-                        Autentikasi
+                        Organisasi
                       </div>
                       <p className="text-sm">
                         Setiap request API wajib menyertakan
