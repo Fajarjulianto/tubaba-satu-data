@@ -1,9 +1,9 @@
 import { ChevronRight } from "lucide-react";
 import { DocSection, DocItem } from "@/types/doc";
 
-interface DocSidebarProps {
-  sections: DocSection[];
-}
+// interface DocSidebarProps {
+//   sections: DocSection[];
+// }
 
 export const DocSidebar = ({ sections }: { sections: DocSection[] }) => (
   <aside className="lg:col-span-1">

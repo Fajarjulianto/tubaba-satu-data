@@ -43,9 +43,9 @@ export const apiEndpoints: ApiEndpoint[] = [
   {
     method: "GET",
     path: "/jumlah_opd",
-    summary: "Mendapatkan Access Token",
+    summary: "Mendapatkan Jumlah OPD",
     description:
-      "Digunakan untuk menukar API Key dengan JWT Bearer Token yang diperlukan untuk request data privat.",
+      "Endpoint ini mengembalikan jumlah Organisasi Perangkat Daerah (OPD) yang terdaftar di platform Satu Data Tubaba.",
     tag: "Autentikasi",
     params: [
       {
@@ -111,7 +111,7 @@ export const faqs = [
   {
     question: "Bagaimana cara mendapatkan API Key?",
     answer:
-      "Anda Bisa langsung menuju ke menu Lainnya lalu ke Dokumentasi, kemudian cari API.",
+      "Anda Bisa Menghubungi Dinas Kominfo Tubaba untuk mendapatkan API Key dengan menyertakan informasi penggunaan dan institusi Anda.",
   },
   {
     question: "Apakah ada batasan (Rate Limit)?",

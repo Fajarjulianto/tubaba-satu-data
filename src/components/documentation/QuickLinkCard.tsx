@@ -50,7 +50,7 @@ export const QuickLinkCard = () => {
                 <h3 className="font-bold text-sm md:text-base text-slate-900 leading-tight group-hover:text-primary transition-colors">
                   {link.title}
                 </h3>
-                <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-slate-900 mt-1 line-clamp-2 leading-relaxed">
                   {link.desc}
                 </p>
               </div>
