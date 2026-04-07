@@ -10,7 +10,6 @@ export const DocSidebar = ({ sections }: { sections: DocSection[] }) => (
     <div className="sticky top-24 space-y-8 px-2">
       {sections.map((section: DocSection) => (
         <div key={section.id}>
-          {/* Label Kategori Sidebar */}
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">
             <section.icon className="w-3.5 h-3.5 text-primary/60" />
             {section.title}
@@ -21,9 +20,8 @@ export const DocSidebar = ({ sections }: { sections: DocSection[] }) => (
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary py-1.5 transition-all group font-medium"
+                  className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary py-1.5 transition-all group font-bold"
                 >
-                  {/* Efek indikator saat hover */}
                   <ChevronRight
                     size={12}
                     className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"

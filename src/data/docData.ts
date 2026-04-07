@@ -41,7 +41,7 @@ export const docSections: DocSection[] = [
 //dummy api endpoint sementara
 export const apiEndpoints: ApiEndpoint[] = [
   {
-    method: "POST",
+    method: "GET",
     path: "/jumlah_opd",
     summary: "Mendapatkan Access Token",
     description:

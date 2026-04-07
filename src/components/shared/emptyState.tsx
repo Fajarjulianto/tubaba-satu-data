@@ -26,7 +26,6 @@ export const EmptyState = ({
         className,
       )}
     >
-      {/* Icon Container dengan style halus */}
       <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mb-6">
         {icon === "search" ? (
           <SearchX className="w-10 h-10 text-slate-300" />
@@ -35,13 +34,11 @@ export const EmptyState = ({
         )}
       </div>
 
-      {/* Teks Informasi */}
       <div className="max-w-xs space-y-2">
         <h3 className="text-xl font-bold text-slate-800">{title}</h3>
         <p className="text-sm text-slate-400 leading-relaxed">{description}</p>
       </div>
 
-      {/* Tombol Aksi Opsional */}
       {actionLabel && onAction && (
         <Button
           onClick={onAction}

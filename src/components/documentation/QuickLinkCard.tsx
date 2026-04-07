@@ -37,7 +37,6 @@ export const QuickLinkCard = () => {
         <a key={i} href={link.href} className="group">
           <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border-slate-200 h-full rounded-2xl md:rounded-3xl overflow-hidden">
             <CardContent className="p-5 md:p-6 flex items-center gap-4">
-              {/* Icon Container dengan efek hover */}
               <div
                 className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-300",
