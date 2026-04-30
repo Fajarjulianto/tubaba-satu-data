@@ -5,6 +5,36 @@ import { toast } from "sonner";
 const STORAGE_BASE_URL =
   "https://aplikasi.tubaba.go.id/storage/disk/satu_data/import";
 
+type XlsxModule = {
+  read: (data: ArrayBuffer, opts: { type: string }) => {
+    SheetNames: string[];
+    Sheets: Record<string, unknown>;
+  };
+  utils: {
+    sheet_to_json: <T>(sheet: unknown, opts?: { defval?: unknown }) => T[];
+  };
+};
+
+const loadXlsx = async (): Promise<XlsxModule> => {
+  const dynamicImport = new Function("u", "return import(u)") as (
+    url: string
+  ) => Promise<unknown>;
+  const mod = (await dynamicImport(
+    "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm"
+  )) as { default?: XlsxModule; read?: XlsxModule["read"]; utils?: XlsxModule["utils"] };
+  return (mod.default ?? mod) as XlsxModule;
+};
+
+const resolveDownloadUrl = (dataset: Dataset) => {
+  if (dataset.fileUrl) return dataset.fileUrl;
+  const sourceFile = dataset.metadata?.source;
+  if (!sourceFile) return "";
+  if (sourceFile.startsWith("http://") || sourceFile.startsWith("https://")) {
+    return sourceFile;
+  }
+  return `${STORAGE_BASE_URL}/${sourceFile}`;
+};
+
 export const useDatasetActions = () => {
   // Fungsi Download
   const handleDownload = async (dataset: Dataset, format: FileFormat) => {
@@ -13,17 +43,14 @@ export const useDatasetActions = () => {
       return;
     }
 
-    const fileName = dataset.metadata?.source;
-
-    if (!fileName) {
-      toast.error("File tidak tersedia untuk dataset ini");
-      return;
-    }
-
     try {
       // Untuk XLSX — langsung download dari URL storage backend
       if (format === "XLSX") {
-        const fileUrl = `${STORAGE_BASE_URL}/${fileName}`;
+        const fileUrl = resolveDownloadUrl(dataset);
+        if (!fileUrl) {
+          toast.error("File tidak tersedia untuk dataset ini");
+          return;
+        }
         const safeFileName = dataset.title.replace(/\s+/g, "_");
 
         const link = document.createElement("a");
@@ -39,12 +66,35 @@ export const useDatasetActions = () => {
       }
 
       if (format === "JSON") {
-        if (!dataset.previewData || dataset.previewData.length === 0) {
-          toast.error("Data preview tidak tersedia untuk diunduh sebagai JSON");
+        let jsonData = dataset.previewData || [];
+
+        if (jsonData.length === 0) {
+          const fileUrl = resolveDownloadUrl(dataset);
+          if (fileUrl) {
+            try {
+              const response = await fetch(fileUrl);
+              if (response.ok) {
+                const XLSX = await loadXlsx();
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: "array" });
+                const firstSheetName = workbook.SheetNames[0];
+                if (firstSheetName) {
+                  const worksheet = workbook.Sheets[firstSheetName];
+                  jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+                }
+              }
+            } catch {
+              // fallback handled below
+            }
+          }
+        }
+
+        if (jsonData.length === 0) {
+          toast.error("Data tidak tersedia untuk diunduh sebagai JSON");
           return;
         }
 
-        const jsonContent = JSON.stringify(dataset.previewData, null, 2);
+        const jsonContent = JSON.stringify(jsonData, null, 2);
         const blob = new Blob([jsonContent], { type: "application/json" });
         const url = window.URL.createObjectURL(blob);
         const safeFileName = dataset.title.replace(/\s+/g, "_");

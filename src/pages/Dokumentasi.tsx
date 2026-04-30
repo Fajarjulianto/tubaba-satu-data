@@ -139,7 +139,7 @@ const Documentation = () => {
                         Setiap request API wajib menyertakan
                         <code className="bg-slate-100 px-1.5 py-0.5 rounded text-primary">
                           Bearer Token
-                        </code>{" "}
+                        </code>
                         yang dijalankan melalui API Key Anda.
                       </p>
                     </div>

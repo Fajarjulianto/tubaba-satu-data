@@ -36,7 +36,7 @@ export function HeroSection() {
       <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
         <div className="max-w-4xl w-full">
           {/* Ornamen atas judul */}
-          <div className="flex items-center justify-center gap-3 mb-4 opacity-60">
+          {/* <div className="flex items-center justify-center gap-3 mb-4 opacity-60">
             <div className="h-px w-16 bg-gradient-to-r from-transparent to-secondary" />
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <polygon
@@ -45,7 +45,7 @@ export function HeroSection() {
               />
             </svg>
             <div className="h-px w-16 bg-gradient-to-l from-transparent to-secondary" />
-          </div>
+          </div> */}
 
           {/* Title */}
           <h1 className="text-4xl md:text-7xl text-white mb-6 leading-[1.1] tracking-tight font-bold">
@@ -54,9 +54,7 @@ export function HeroSection() {
 
           {/* Description */}
           <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl font-medium mx-auto">
-            Portal data terpadu resmi Kabupaten Tulang Bawang Barat. Akses data
-            publik yang terstruktur untuk mendukung transparansi, penelitian,
-            dan pembangunan berbasis data.
+            Portal Satu Data Indonesia Kabupaten Tulang Bawang Barat. Satu Data Tubaba mendukung pembangunan berbasis data akurat,transparan dan akuntabel
           </p>
 
           {/* ── Search Bar ── */}
@@ -131,9 +129,9 @@ export function HeroSection() {
           </form>
 
           {/* Divider bintang */}
-          <div className="mt-10 mb-2">
+          {/* <div className="mt-10 mb-2">
             <TapisStarDivider />
-          </div>
+          </div> */}
 
           {/* Statistics */}
           <div className="w-full flex justify-center">

@@ -14,10 +14,6 @@ const navLinks = [
   { name: "Home", href: "/" },
   { name: "Dataset", href: "/dataset" },
   { name: "Statistik", href: "/statistik" },
-  { name: "Metadata", href: "/metadata" },
-  { name: "Organisasi", href: "/organisasi" },
-  { name: "Kontak", href: "/kontak" },
-  { name: "Dokumentasi", href: "/dokumentasi" },
 ];
 
 export function Header() {
@@ -60,14 +56,14 @@ export function Header() {
               </Link>
             ))}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              {/* <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   className="px-3 py-2 text-sm font-bold text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
                 >
                   Lainnya <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
-              </DropdownMenuTrigger>
+              </DropdownMenuTrigger> */}
               <DropdownMenuContent
                 align="end"
                 className="bg-card border-border"

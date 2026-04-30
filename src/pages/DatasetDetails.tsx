@@ -17,7 +17,7 @@ import DatasetVisualization from "@/components/datasets/DatasetVisualization";
 import { DatasetPreviewRow } from "@/types/index";
 import { useDatasetActions } from "@/hooks/data/useDatasetActions";
 import { useNavigate } from "react-router-dom";
-import { useFetchDatasetDetail } from "@/hooks/data/useFetchDatasetsDetail";
+import { useFetchDatasetDetail } from "@/hooks/data/useFetchDatasetDetail";
 
 const TABS = ["tabel", "grafik", "geospasial", "metadata"] as const;
 type TabType = (typeof TABS)[number];
@@ -48,11 +48,12 @@ const DatasetDetails = () => {
   const location = useLocation();
   const { handleDownload, handleShare } = useDatasetActions();
   const [activeTab, setActiveTab] = useState<TabType>("tabel");
-
-  // Ambil opd dari navigate state yang dikirim oleh DatasetCard
-  const opd = (location.state as { opd?: string })?.opd;
-
-  const { data: dataset, isLoading } = useFetchDatasetDetail(opd, id);
+  const routeState = (location.state as { opd?: string; source?: string }) || {};
+  const { data: dataset, isLoading } = useFetchDatasetDetail(
+    routeState.opd,
+    id,
+    routeState.source
+  );
 
   // Loading State
   if (isLoading) {
@@ -98,7 +99,7 @@ const DatasetDetails = () => {
   const hasVisualization = dataset.hasVisualization ?? false;
 
   return (
-    <Layout>
+    <Layout>  
       {/* Header Section */}
       <header className="bg-primary text-primary-foreground py-8 md:py-16">
         <div className="container mx-auto px-4 md:px-6">

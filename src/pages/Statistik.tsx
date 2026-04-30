@@ -1,6 +1,6 @@
+import { useState, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
 import {
-  BarChart3,
   TrendingUp,
   Users,
   Building2,
@@ -28,9 +28,9 @@ import {
   Cell,
   LineChart,
   Line,
-  Legend,
 } from "recharts";
 import { HeaderSection } from "@/components/ui/molecule/HeaderSection";
+import { SearchBar } from "@/components/datasets/SearchBar";
 
 const populationData = [
   { kecamatan: "TB Tengah", population: 45230, male: 23100, female: 22130 },
@@ -66,7 +66,18 @@ const educationData = [
   { level: "PT", students: 3200 },
 ];
 
+const ALL_STATS_ITEMS = populationData.map((d) => d.kecamatan);
+
 const Statistics = () => {
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredPopulation = useMemo(() => {
+    if (!searchQuery) return populationData;
+    return populationData.filter((row) =>
+      row.kecamatan.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
   return (
     <Layout>
       {/* Header */}
@@ -74,7 +85,16 @@ const Statistics = () => {
         title="Statistik"
         description="Data dan visualisasi statistik komprehensif untuk Kabupaten Tulang Bawang Barat. Jelajahi indikator utama di berbagai sektor."
       />
+
       <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
+        <div className="flex-1 mb-6 md:mb-8">
+          <SearchBar
+            value={searchQuery}
+            onChange={(val) => setSearchQuery(val)}
+            resultCount={filteredPopulation.length}
+          />
+        </div>
+
         {/* Key Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
           <Card>
@@ -85,7 +105,7 @@ const Statistics = () => {
                 </div>
                 <div className="min-w-0">
                   <p className="text-lg md:text-2xl font-bold truncate">
-                    198,630
+                    310,640
                   </p>
                   <p className="text-xs md:text-sm text-muted-foreground">
                     Total Populasi
@@ -101,7 +121,7 @@ const Statistics = () => {
                   <Building2 className="w-5 h-5 md:w-6 md:h-6 text-secondary" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-lg md:text-2xl font-bold">8</p>
+                  <p className="text-lg md:text-2xl font-bold">9</p>
                   <p className="text-xs md:text-sm text-muted-foreground">
                     Kecamatan
                   </p>
@@ -116,7 +136,7 @@ const Statistics = () => {
                   <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-foreground" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-lg md:text-2xl font-bold">11.5T</p>
+                  <p className="text-lg md:text-2xl font-bold">15,59T</p>
                   <p className="text-xs md:text-sm text-muted-foreground">
                     PDRB (Rp)
                   </p>
@@ -167,7 +187,7 @@ const Statistics = () => {
             <CardContent className="p-4 md:p-6 pt-0">
               <div className="h-[250px] md:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={populationData} layout="vertical">
+                  <BarChart data={filteredPopulation} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" tick={{ fontSize: 12 }} />
                     <YAxis
@@ -178,7 +198,7 @@ const Statistics = () => {
                     />
                     <Tooltip />
                     <Bar
-                      dataKey="populasi"
+                      dataKey="population"
                       fill="hsl(var(--primary))"
                       radius={[0, 4, 4, 0]}
                     />
@@ -348,23 +368,31 @@ const Statistics = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {populationData.map((row) => (
-                      <tr
-                        key={row.kecamatan}
-                        className="border-b last:border-0"
-                      >
-                        <td className="py-3">{row.kecamatan}</td>
-                        <td className="text-right py-3">
-                          {row.population.toLocaleString()}
-                        </td>
-                        <td className="text-right py-3">
-                          {row.male.toLocaleString()}
-                        </td>
-                        <td className="text-right py-3">
-                          {row.female.toLocaleString()}
+                    {filteredPopulation.length > 0 ? (
+                      filteredPopulation.map((row) => (
+                        <tr key={row.kecamatan} className="border-b last:border-0">
+                          <td className="py-3">{row.kecamatan}</td>
+                          <td className="text-right py-3">
+                            {row.population.toLocaleString()}
+                          </td>
+                          <td className="text-right py-3">
+                            {row.male.toLocaleString()}
+                          </td>
+                          <td className="text-right py-3">
+                            {row.female.toLocaleString()}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          className="py-10 text-center text-slate-400 italic"
+                        >
+                          Tidak ditemukan data yang sesuai pencarian Anda.
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>

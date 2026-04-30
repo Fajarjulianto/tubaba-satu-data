@@ -3,7 +3,7 @@ import {
   KATEGORI_OPTIONS,
   TAHUN_OPTIONS,
 } from "@/constant/mockdata";
-import { Upload, FileText, X } from "lucide-react";
+import { Download } from "lucide-react";
 import {
   Button,
   Input,
@@ -36,6 +36,7 @@ const UploadDataAdmin = () => {
     resolver: zodResolver(uploadDataSchema),
   });
   const { addFile, updateProgress, updateStatus, files } = useUploadStore();
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -70,15 +71,16 @@ const UploadDataAdmin = () => {
       toast.error("Silakan pilih dan unggah file terlebih dahulu");
       return;
     }
-
     console.log("Data Form Valid:", data);
     toast.success("Data berhasil disimpan!");
   };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-6 animate-in fade-in duration-500"
     >
+      <pre className="text-xs bg-red-50 p-2">{JSON.stringify(errors, null, 2)}</pre>
       <div className="space-y-6 animate-in fade-in duration-500">
         {/* Page Header */}
         <div>
@@ -114,6 +116,7 @@ const UploadDataAdmin = () => {
                   </p>
                 )}
               </div>
+
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Instansi *</Label>
                 <Controller
@@ -124,7 +127,14 @@ const UploadDataAdmin = () => {
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
+                      {/*
+                       * ✅ FIX: Tambahkan `ref={field.ref}` pada SelectTrigger.
+                       * Tanpa ini, react-hook-form tidak punya referensi ke elemen DOM,
+                       * sehingga tidak bisa meneruskan pesan error dari Zod dan
+                       * jatuh ke fallback "Required" bawaan browser.
+                       */}
                       <SelectTrigger
+                        ref={field.ref}
                         className={`bg-slate-50/50 ${errors.instansi ? "border-red-500" : ""}`}
                       >
                         <SelectValue placeholder="Pilih instansi" />
@@ -145,6 +155,7 @@ const UploadDataAdmin = () => {
                   </p>
                 )}
               </div>
+
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Kategori *</Label>
                 <Controller
@@ -155,7 +166,9 @@ const UploadDataAdmin = () => {
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
+                      {/* ✅ FIX: Sama seperti Instansi — tambahkan ref={field.ref} */}
                       <SelectTrigger
+                        ref={field.ref}
                         className={`bg-slate-50/50 ${errors.kategori ? "border-red-500" : ""}`}
                       >
                         <SelectValue placeholder="Pilih kategori" />
@@ -176,6 +189,7 @@ const UploadDataAdmin = () => {
                   </p>
                 )}
               </div>
+
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Tahun Data *</Label>
                 <Controller
@@ -186,7 +200,9 @@ const UploadDataAdmin = () => {
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
+                      {/* ✅ FIX: Sama seperti Instansi — tambahkan ref={field.ref} */}
                       <SelectTrigger
+                        ref={field.ref}
                         className={`bg-slate-50/50 ${errors.tahun ? "border-red-500" : ""}`}
                       >
                         <SelectValue placeholder="Pilih tahun" />
@@ -225,6 +241,7 @@ const UploadDataAdmin = () => {
 
         <UploadCard onFileSelect={handleFileUpload} />
         <FileListProgress />
+
         {/* Footer */}
         <div className="flex justify-end items-center gap-3 pt-4">
           <Button

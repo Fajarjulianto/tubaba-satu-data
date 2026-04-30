@@ -1,195 +1,194 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
-import {
-  FileCode,
-  Search,
-  Filter,
-  Download,
-  Eye,
-  Calendar,
-  Tag,
-  Building2,
-  FileText,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Input,
-  Button,
-  Badge,
-} from "@/components/index";
 import { HeaderSection } from "@/components/ui/molecule/HeaderSection";
-import { metadataItems } from "@/constant/mockdata";
+import { SearchBar } from "@/components/datasets/SearchBar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/datasets/Pagination";
+import {
+  Building2,
+  CalendarDays,
+  FileText,
+  Tag,
+  Database,
+  ExternalLink,
+} from "lucide-react";
+import { useFetchCkan, CKANdataItem } from "@/hooks/data/useFetchCkan";
+
+const ITEMS_PER_PAGE = 6;
+
+
+const MetadataCard = ({ item }: { item: CKANdataItem}) => {
+  const fileType = item.resources?.[0]?.format || "DATA";
+  const category = item.groups?.[0]?.display_name || "Lainnya";
+  const agency = item.organization?.title || "Tanpa Instansi";
+  const publishedDate = item.metadata_created?.split("T")[0] || "-";
+  const lastUpdated = item.metadata_modified?.split("T")[0] || "-";
+  const description = item.notes || "Tidak ada deskripsi.";
+  const sourceUrl = item.resources?.[0]?.url || null;
+
+  return (
+    <Card className="rounded-3xl border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 group overflow-hidden">
+      <CardContent className="p-6 flex flex-col gap-4 h-full">
+        {/* Badges */}
+        <div className="flex flex-wrap gap-2">
+          <Badge
+            variant="secondary"
+            className="text-[9px] uppercase tracking-widest font-black font-tubaba px-2 py-1"
+          >
+            {category}
+          </Badge>
+          <Badge
+            variant="outline"
+            className="text-[9px] uppercase tracking-widest font-bold font-tubaba px-2 py-1 text-primary border-primary/20 bg-primary/5"
+          >
+            {fileType}
+          </Badge>
+        </div>
+
+        {/* Judul */}
+        <h3 className="font-tubaba font-bold text-slate-900 text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          {item.title || item.name}
+        </h3>
+
+        {/* Deskripsi */}
+        <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 flex-1">
+          {description}
+        </p>
+
+        {/* Info baris */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-slate-500 border-t border-slate-100 pt-4">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Building2 className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="truncate">{agency}</span>
+          </div>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Database className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="truncate">
+              {item.num_resources} resource
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <CalendarDays className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="truncate">Dibuat: {publishedDate}</span>
+          </div>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <CalendarDays className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <span className="truncate">Update: {lastUpdated}</span>
+          </div>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <FileText className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="truncate">
+              {item.license_title || "Open Data"}
+            </span>
+          </div>
+          {item.tags?.length > 0 && (
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Tag className="w-3.5 h-3.5 text-primary shrink-0" />
+              <span className="truncate">
+                {item.tags.slice(0, 2).map((t) => t.name).join(", ")}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Link ke sumber */}
+        {sourceUrl && (
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline mt-auto pt-2 border-t border-slate-100"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Lihat Sumber Data
+          </a>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+const MetadataCardSkeleton = () => (
+  <div className="h-64 bg-slate-100 rounded-3xl animate-pulse" />
+);
+
 
 const Metadata = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const toggleExpand = (id: string) => {
-    setExpandedItems((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+  const { data: metadataList = [], isLoading, isError } = useFetchCkan();
+
+  const filteredMetadata = useMemo(() => {
+    if (!searchQuery) return metadataList;
+    const q = searchQuery.toLowerCase();
+    return metadataList.filter(
+      (item) =>
+        item.title?.toLowerCase().includes(q) ||
+        item.organization?.title?.toLowerCase().includes(q) ||
+        item.groups?.[0]?.display_name?.toLowerCase().includes(q) ||
+        item.tags?.some((t) => t.name.toLowerCase().includes(q))
     );
+  }, [metadataList, searchQuery]);
+
+
+  const handleSearch = (val: string) => {
+    setSearchQuery(val);
+    setCurrentPage(1);
   };
 
-  const filteredItems = metadataItems.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.identifier.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.keywords.some((k) =>
-        k.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-
-    const matchesCategory =
-      selectedCategory === "all" || item.category === selectedCategory;
-
-    return matchesSearch && matchesCategory;
-  });
+  const totalPages = Math.ceil(filteredMetadata.length / ITEMS_PER_PAGE);
+  const paginatedMetadata = filteredMetadata.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <Layout>
       <HeaderSection
         title="Metadata"
-        description="Jelajahi definisi metadata yang distandarisasi untuk semua kumpulan data. Pahami struktur data, format, dan persyaratan akses."
+        description="Jelajahi informasi metadata dataset publik Kabupaten Tulang Bawang Barat."
       />
 
-      <main className="container mx-auto px-6 py-8">
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              placeholder="Cari Berdasarkan Judul atau Kategori"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 bg-card"
-            />
+      <main className="container mx-auto px-4 py-8">
+        <SearchBar
+          value={searchQuery}
+          onChange={handleSearch}
+          resultCount={filteredMetadata.length}
+        />
+
+        {isLoading ? (
+          <div className="grid sm:grid-cols-2 gap-5 mt-6">
+            {[...Array(4)].map((_, i) => (
+              <MetadataCardSkeleton key={i} />
+            ))}
           </div>
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full sm:w-48 h-12 bg-card">
-              <Filter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="Kategori" />
-            </SelectTrigger>
-            <SelectContent className="bg-card">
-              <SelectItem value="all">Semua Kategori</SelectItem>
-              <SelectItem value="Population">Populasi</SelectItem>
-              <SelectItem value="Health">Kesehatan</SelectItem>
-              <SelectItem value="Economy">Ekonomi</SelectItem>
-              <SelectItem value="Education">Pendidikan</SelectItem>
-              <SelectItem value="Infrastructure">Infrastruktur</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Metadata List */}
-        <div className="space-y-4">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className="bg-card border border-border rounded-xl overflow-hidden"
-            >
-              <div
-                className="p-5 cursor-pointer hover:bg-muted/30 transition-colors"
-                onClick={() => toggleExpand(item.id)}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-burgundy-light flex items-center justify-center shrink-0">
-                      <FileText className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-display font-semibold text-foreground">
-                          {item.title}
-                        </h3>
-                        <Badge variant="secondary" className="text-xs">
-                          {item.category}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground font-mono">
-                        {item.identifier}
-                      </p>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="icon">
-                    {expandedItems.includes(item.id) ? (
-                      <ChevronUp className="w-5 h-5" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {expandedItems.includes(item.id) && (
-                <div className="px-5 pb-5 pt-0 border-t border-border">
-                  <div className="grid md:grid-cols-2 gap-6 mt-5">
-                    <div>
-                      <h4 className="text-sm font-medium text-foreground mb-2">
-                        Description
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <Building2 className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                          <strong>Agency:</strong> {item.agency}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <FileCode className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                          <strong>Format:</strong> {item.format}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                          <strong>Update Frequency:</strong> {item.frequency}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Tag className="w-4 h-4 text-muted-foreground" />
-                      {item.keywords.map((keyword) => (
-                        <Badge
-                          key={keyword}
-                          variant="outline"
-                          className="text-xs"
-                        >
-                          {keyword}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex gap-3 mt-4">
-                    <Button size="sm" className="gap-2">
-                      <Eye className="w-4 h-4" /> View Schema
-                    </Button>
-                    <Button size="sm" variant="outline" className="gap-2">
-                      <Download className="w-4 h-4" /> Export
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {filteredItems.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No metadata found.</p>
+        ) : isError ? (
+          // Error state
+          <div className="text-center py-20 text-slate-400 font-tubaba italic">
+            Gagal memuat metadata. Periksa koneksi ke server CKAN.
           </div>
+        ) : filteredMetadata.length > 0 ? (
+          <div className="grid sm:grid-cols-2 gap-5 mt-6">
+            {paginatedMetadata.map((item) => (
+              <MetadataCard key={item.id} item={item} />
+            ))}
+          </div>
+        ) : (
+          // Empty state — teks identik polanya dengan Dataset.tsx
+          <div className="text-center py-20 text-slate-400 font-tubaba italic">
+            Tidak ditemukan metadata yang sesuai kriteria pencarian Anda.
+          </div>
+        )}
+
+        {/* Pagination — identik dengan Dataset.tsx */}
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         )}
       </main>
     </Layout>

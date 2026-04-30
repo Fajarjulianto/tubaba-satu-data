@@ -1,18 +1,23 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
-import { categories, categoriesExtra } from "@/constant/mockdata";
+import { ArrowRight } from "lucide-react";
+import { categories } from "@/constant/mockdata";
+import { useCombinedDatasets } from "@/hooks/data/useCombinedDataset";
 
-type Category = {
-  name: string;
-  icon: React.ElementType;
-  count: number;
-  description: string;
-  color: string;
-};
+type CategoryDef = (typeof categories)[number];
 
 export function CategorySection() {
-  const [showAll, setShowAll] = useState(false);
+  const { data: datasets = [], isLoading } = useCombinedDatasets();
+
+  // Hitung jumlah dataset per kategori dari data CKAN
+  const countMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    datasets.forEach((d) => {
+      const cat = d.category || "Pemerintahan";
+      map[cat] = (map[cat] || 0) + 1;
+    });
+    return map;
+  }, [datasets]);
 
   return (
     <section className="py-10 md:py-16 bg-background">
@@ -35,46 +40,18 @@ export function CategorySection() {
           </Link>
         </div>
 
+
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
           {categories.map((category) => (
-            <CategoryCard key={category.name} category={category} />
-          ))}
-
-          {categoriesExtra.map((category, i) => (
-            <div
+            <CategoryCard
               key={category.name}
-              style={{
-                overflow: "hidden",
-                maxHeight: showAll ? "500px" : "0px",
-                opacity: showAll ? 1 : 0,
-                transform: showAll ? "translateY(0)" : "translateY(10px)",
-                transition: `max-height 0.4s ease ${i * 50}ms, opacity 0.35s ease ${i * 50}ms, transform 0.35s ease ${i * 50}ms`,
-                pointerEvents: showAll ? "auto" : "none",
-              }}
-            >
-              <CategoryCard category={category} />
-            </div>
+              category={category}
+              count={isLoading ? null : (countMap[category.name] ?? 0)}
+            />
           ))}
         </div>
 
-        {/* Tombol toggle */}
-        <div className="flex flex-col items-center gap-3 mt-8">
-          <button
-            onClick={() => setShowAll((prev) => !prev)}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-primary/30 text-primary text-sm font-medium hover:bg-primary hover:text-white transition-all duration-200 active:scale-95"
-          >
-            {showAll ? (
-              <>
-                Sembunyikan <ChevronUp className="w-4 h-4" />
-              </>
-            ) : (
-              <>
-                Lihat semua kategori ({categoriesExtra.length} lainnya){" "}
-                <ChevronDown className="w-4 h-4" />
-              </>
-            )}
-          </button>
-
+        <div className="flex justify-center mt-8">
           <Link
             to="/dataset"
             className="md:hidden flex items-center gap-2 text-primary font-medium hover:underline text-sm"
@@ -87,7 +64,15 @@ export function CategorySection() {
   );
 }
 
-function CategoryCard({ category }: { category: Category }) {
+// ── Card per kategori ────────────────────────────────────────────────────────
+function CategoryCard({
+  category,
+  count,
+}: {
+  category: CategoryDef;
+  // null = sedang loading
+  count: number | null;
+}) {
   return (
     <Link
       to={`/dataset?category=${encodeURIComponent(category.name)}`}
@@ -105,7 +90,11 @@ function CategoryCard({ category }: { category: Category }) {
               {category.name}
             </h3>
             <span className="text-xs md:text-sm text-muted-foreground shrink-0">
-              {category.count} dataset
+              {count === null ? (
+                <span className="inline-block w-12 h-3.5 bg-slate-200 rounded animate-pulse" />
+              ) : (
+                `${count} dataset`
+              )}
             </span>
           </div>
           <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 hidden md:block">

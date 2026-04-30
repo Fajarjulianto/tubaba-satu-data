@@ -19,9 +19,9 @@ const DatasetDetails = lazy(() => import("./pages/DatasetDetails"));
 const Statistik = lazy(() => import("./pages/Statistik"));
 const Metadata = lazy(() => import("./pages/Metadata"));
 // const Analisis = lazy(() => import("./pages/Analisis"));
-const Dokumentasi = lazy(() => import("./pages/Dokumentasi"));
-const Kontak = lazy(() => import("./pages/Kontak"));
-const Organisasi = lazy(() => import("./pages/Organisasi"));
+// const Dokumentasi = lazy(() => import("./pages/Dokumentasi"));
+// const Kontak = lazy(() => import("./pages/Kontak"));
+// const Organisasi = lazy(() => import("./pages/Organisasi"));
 const LoginPage = lazy(() => import("./pages/login"));
 const Dashboard = lazy(() => import("./pages/admin/dashboard"));
 const UploadDataAdmin = lazy(() => import("./components/admin/UploadData"));
@@ -42,9 +42,9 @@ const publicRoutes = [
   { path: "/statistik", element: <Statistik /> },
   { path: "/metadata", element: <Metadata /> },
   // { path: "/analisis", element: <Analisis /> },
-  { path: "/dokumentasi", element: <Dokumentasi /> },
-  { path: "/kontak", element: <Kontak /> },
-  { path: "/organisasi", element: <Organisasi /> },
+  // { path: "/dokumentasi", element: <Dokumentasi /> },
+  // { path: "/kontak", element: <Kontak /> },
+  // { path: "/organisasi", element: <Organisasi /> },
   { path: "/login", element: <LoginPage /> },
 ];
 

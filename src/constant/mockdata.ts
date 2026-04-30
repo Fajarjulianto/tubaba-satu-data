@@ -46,7 +46,7 @@ export const categoryData = [
 
 export const stats = [
   { label: "Total Dataset", value: "169", icon: Database, change: "+12%" },
-  { label: "Jumlah Lembaga", value: "12", icon: Building2, change: "+2" },
+  { label: "Jumlah Produsen", value: "12", icon: Building2, change: "+2" },
   { label: "Total Download", value: "52.4K", icon: Download, change: "+18%" },
   { label: "Pertumbuhan Data", value: "24%", icon: TrendingUp, change: "+5%" },
 ];
@@ -138,19 +138,23 @@ export const agencies = [
   },
 ];
 
-// ── Kategori utama
+/**
+ * 13 Kategori utama — nilai `name` harus PERSIS sama dengan
+ * `groups[0].display_name` yang dikembalikan API CKAN,
+ * karena dipakai sebagai filter di URL param ?category=...
+ */
 export const categories = [
   {
     name: "Geografi dan Iklim",
     icon: Map,
-    count: 12,
+    count: 0,
     description: "Data wilayah, topografi, iklim, dan lingkungan alam daerah",
     color: "bg-teal-500/10 text-teal-600 border-teal-200",
   },
   {
     name: "Pemerintahan",
     icon: Landmark,
-    count: 20,
+    count: 0,
     description:
       "Data aparatur, kebijakan, anggaran, dan tata kelola pemerintah",
     color: "bg-slate-500/10 text-slate-600 border-slate-200",
@@ -158,7 +162,7 @@ export const categories = [
   {
     name: "Penduduk dan Ketenagakerjaan",
     icon: Briefcase,
-    count: 28,
+    count: 0,
     description:
       "Data demografi, angkatan kerja, pengangguran, dan ketenagakerjaan",
     color: "bg-blue-500/10 text-blue-600 border-blue-200",
@@ -166,7 +170,7 @@ export const categories = [
   {
     name: "Sosial dan Kesejahteraan Rakyat",
     icon: HandHeart,
-    count: 27,
+    count: 0,
     description:
       "Data bantuan sosial, kemiskinan, pendidikan, dan kesehatan masyarakat",
     color: "bg-orange-500/10 text-orange-600 border-orange-200",
@@ -174,7 +178,7 @@ export const categories = [
   {
     name: "Pertanian, Kehutanan, Peternakan, dan Perikanan",
     icon: Leaf,
-    count: 22,
+    count: 0,
     description:
       "Data produksi pertanian, kehutanan, peternakan, dan hasil perikanan",
     color: "bg-green-500/10 text-green-600 border-green-200",
@@ -182,19 +186,15 @@ export const categories = [
   {
     name: "Industri, Pertambangan, dan Energi",
     icon: Factory,
-    count: 14,
+    count: 0,
     description:
       "Data industri pengolahan, pertambangan, dan konsumsi energi daerah",
     color: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
   },
-];
-
-// ── Kategori tambahan
-export const categoriesExtra = [
   {
     name: "Pariwisata",
     icon: Plane,
-    count: 9,
+    count: 0,
     description:
       "Data objek wisata, kunjungan wisatawan, dan akomodasi pariwisata",
     color: "bg-sky-500/10 text-sky-600 border-sky-200",
@@ -202,7 +202,7 @@ export const categoriesExtra = [
   {
     name: "Transportasi dan Komunikasi",
     icon: Truck,
-    count: 11,
+    count: 0,
     description:
       "Data infrastruktur transportasi, kendaraan, dan telekomunikasi",
     color: "bg-indigo-500/10 text-indigo-600 border-indigo-200",
@@ -210,14 +210,14 @@ export const categoriesExtra = [
   {
     name: "Perbankan, Koperasi, dan Harga-harga",
     icon: Banknote,
-    count: 16,
+    count: 0,
     description: "Data perbankan, koperasi, inflasi, dan indeks harga konsumen",
     color: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
   },
   {
     name: "Pengeluaran Penduduk",
     icon: Wallet,
-    count: 8,
+    count: 0,
     description:
       "Data konsumsi rumah tangga, pengeluaran, dan pola belanja masyarakat",
     color: "bg-rose-500/10 text-rose-600 border-rose-200",
@@ -225,7 +225,7 @@ export const categoriesExtra = [
   {
     name: "Perdagangan",
     icon: ShoppingCart,
-    count: 13,
+    count: 0,
     description:
       "Data ekspor, impor, distribusi barang, dan aktivitas perdagangan",
     color: "bg-amber-500/10 text-amber-600 border-amber-200",
@@ -233,18 +233,21 @@ export const categoriesExtra = [
   {
     name: "Sistem Neraca Regional",
     icon: BarChart3,
-    count: 10,
+    count: 0,
     description: "Data PDRB, pertumbuhan ekonomi, dan neraca pendapatan daerah",
     color: "bg-violet-500/10 text-violet-600 border-violet-200",
   },
   {
     name: "Perbandingan Antar Kabupaten",
     icon: Globe,
-    count: 7,
+    count: 0,
     description: "Data komparatif lintas kabupaten/kota dan indikator regional",
     color: "bg-cyan-500/10 text-cyan-600 border-cyan-200",
   },
 ];
+
+// categoriesExtra dihapus — sudah digabung ke categories di atas
+export const categoriesExtra: typeof categories = [];
 
 export const metadataItems = [
   {

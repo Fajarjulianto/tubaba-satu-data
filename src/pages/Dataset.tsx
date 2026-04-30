@@ -6,35 +6,37 @@ import { DatasetCard } from "@/components/datasets/DatasetCard";
 import { Pagination } from "@/components/datasets/Pagination";
 import { HeaderSection } from "@/components/ui/molecule/HeaderSection";
 import { FilterSidebar } from "@/components/datasets/FilterSidebar";
-import { useFetchDatasets } from "@/hooks/data/useFetchDatasets";
+import { useCombinedDatasets } from "@/hooks/data/useCombinedDataset";
 
 const ITEMS_PER_PAGE = 6;
 
 const Datasets = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const searchQuery = searchParams.get("q") || "";
+
+  const searchQuery    = searchParams.get("q")        || "";
   const categoryFilter = searchParams.get("category") || "";
-  const currentPage = parseInt(searchParams.get("page") || "1");
+  const yearFilter     = searchParams.get("year")     || "";
+  const currentPage    = parseInt(searchParams.get("page") || "1");
 
-  // Fetch semua dataset dari semua OPD
-  const { data: datasets = [], isLoading } = useFetchDatasets();
+  const { data: datasets = [], isLoading } = useCombinedDatasets();
 
-  // Logika Filtering Data
   const filteredDatasets = useMemo(() => {
     return datasets.filter((dataset) => {
       const matchesSearch =
         !searchQuery ||
         dataset.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         dataset.agency.toLowerCase().includes(searchQuery.toLowerCase());
-
+      const datasetCategory = dataset.category || "Pemerintahan";
       const matchesCategory =
-        !categoryFilter || dataset.category === categoryFilter;
+        !categoryFilter || datasetCategory === categoryFilter;
+      const datasetYear = dataset.metadata?.publishedDate?.split("-")[0] || "";
+      const matchesYear = !yearFilter || datasetYear === yearFilter;
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesYear;
     });
-  }, [datasets, searchQuery, categoryFilter]);
+  }, [datasets, searchQuery, categoryFilter, yearFilter]);
 
-  // Fungsi untuk memperbarui parameter pencarian di URL
+
   const updateParams = (newParams: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams);
     Object.entries(newParams).forEach(([key, value]) => {
@@ -63,23 +65,23 @@ const Datasets = () => {
           <FilterSidebar
             allDatasets={datasets}
             selectedFilters={{
-              Category: categoryFilter ? [categoryFilter] : [],
+              Category: categoryFilter,
+              Year: yearFilter,
             }}
-            onFilterChange={(_, value) => {
-              const newValue = categoryFilter === value ? null : value;
-              updateParams({ category: newValue });
+            onFilterChange={(type, value) => {
+              if (type === "Category") updateParams({ category: value || null });
+              if (type === "Year")     updateParams({ year: value || null });
             }}
-            onClearFilters={() => setSearchParams({})}
+            onClearFilters={() => setSearchParams(new URLSearchParams())}
           />
 
           <div className="flex-1">
             <SearchBar
               value={searchQuery}
-              onChange={(val) => updateParams({ q: val })}
+              onChange={(val) => updateParams({ q: val || null })}
               resultCount={filteredDatasets.length}
             />
 
-            {/* Handling Loading & Empty State */}
             {isLoading ? (
               <div className="grid sm:grid-cols-2 gap-5 mt-6 animate-pulse">
                 {[...Array(4)].map((_, i) => (
@@ -92,7 +94,7 @@ const Datasets = () => {
                   <DatasetCard
                     key={dataset.id}
                     dataset={dataset}
-                    navigateState={{ opd: dataset.agency }}
+                    navigateState={{ opd: dataset.agency, source: dataset.source }}
                   />
                 ))}
               </div>
