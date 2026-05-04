@@ -3,10 +3,6 @@ import {
   Building2,
   Download,
   TrendingUp,
-  Users,
-  GraduationCap,
-  Heart,
-  Building,
   HandHeart,
   BookOpen,
   Code,
@@ -23,6 +19,8 @@ import {
   BarChart3,
   Globe,
   Wallet,
+  Info,
+  BookOpenText,
 } from "lucide-react";
 
 export const monthlyData = [
@@ -140,7 +138,13 @@ export const agencies = [
 
 
 export const categories = [
- 
+  {
+    name: "Umum",
+    icon:   BookOpenText,
+    count: 0,
+    description: "Data ini mencakup informasi yang dikumpulkan melalui metode survei/observasi ",
+    color: "bg-orange-500/10 text-slate-600 border-slate-200"
+  },
   {
     name: "Geografi dan Iklim",
     icon: Map,
