@@ -11,6 +11,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { TapisPattern, TapisBorder } from "@/constant/motiftapis";
+import tapisBackground from "@/assets/images/Tumpal Tubaba copy.png";
 
 interface FooterLink {
   name: string;
@@ -70,12 +71,31 @@ const SOCIAL_LINKS: SocialLink[] = [
 export function Footer() {
   return (
     <footer className="relative bg-primary text-primary-foreground border-t border-white/5 overflow-hidden">
-      {/* Dekorasi tapis */}
-      <TapisPattern />
-      <TapisBorder />
-      <div className="absolute top-[18px] left-0 w-full h-px bg-secondary/20 z-10" />
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url(${tapisBackground})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.12,
+        }}
+      />
 
-      {/* Konten */}
+      {/* ── Gradient overlay ── */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: [
+            "radial-gradient(ellipse 120% 100% at 50% 50%, transparent 40%, rgba(107,30,42,0.8) 100%)",
+            "linear-gradient(to bottom, rgba(107,30,42,0.5) 0%, rgba(107,30,42,0.85) 100%)",
+            "radial-gradient(ellipse 70% 60% at 50% 20%, rgba(201,168,76,0.05) 0%, transparent 70%)",
+          ].join(", "),
+        }}
+      />
+
+
+      {/* ── Konten ── */}
       <div className="relative z-10 container mx-auto px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand & Sosial Media */}

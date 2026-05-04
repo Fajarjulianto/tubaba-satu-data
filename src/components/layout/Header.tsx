@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Database, ChevronDown } from "lucide-react";
+import { Menu, X, } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import tubabaLogo from "@/assets/images/tubabaLogo3.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,9 +27,13 @@ export function Header() {
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 md:gap-3 group">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-secondary/20 flex items-center justify-center group-hover:bg-secondary/30 transition-colors">
-              <Database className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
-            </div>
+          <div className="w-20 h-20 rounded-lg  flex items-center justify-center transition-colors">
+                <img
+                  src={tubabaLogo}
+                  alt="Logo Tubaba"
+                  className="w-12 h-12 object-contain"
+                />
+              </div>
             <div className="hidden sm:block">
               <span className="font-display font-bold text-base md:text-lg">
                 Satu Data

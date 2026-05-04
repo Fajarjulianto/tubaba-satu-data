@@ -20,7 +20,7 @@ import { useState } from "react";
 interface FilterSidebarProps {
   allDatasets: Dataset[];
   selectedFilters: {
-    Category: string;   // nilai tunggal (string) bukan array
+    Category: string;  
     Year: string;
   };
   onFilterChange: (type: "Category" | "Year", value: string) => void;
@@ -46,14 +46,12 @@ export function FilterSidebar({
     return counts;
   }, [allDatasets]);
 
-  // Hitung tahun unik dari metadata_created dataset
   const availableYears = useMemo(() => {
     const yearSet = new Set<string>();
     allDatasets.forEach((d) => {
       const year = d.metadata?.publishedDate?.split("-")[0];
       if (year && year.match(/^\d{4}$/)) yearSet.add(year);
     });
-    // Gabungkan dengan TAHUN_OPTIONS, urutkan descending
     TAHUN_OPTIONS.forEach((y) => yearSet.add(y));
     return Array.from(yearSet).sort((a, b) => Number(b) - Number(a));
   }, [allDatasets]);

@@ -138,12 +138,9 @@ export const agencies = [
   },
 ];
 
-/**
- * 13 Kategori utama — nilai `name` harus PERSIS sama dengan
- * `groups[0].display_name` yang dikembalikan API CKAN,
- * karena dipakai sebagai filter di URL param ?category=...
- */
+
 export const categories = [
+ 
   {
     name: "Geografi dan Iklim",
     icon: Map,
@@ -246,7 +243,6 @@ export const categories = [
   },
 ];
 
-// categoriesExtra dihapus — sudah digabung ke categories di atas
 export const categoriesExtra: typeof categories = [];
 
 export const metadataItems = [

@@ -1,7 +1,7 @@
 const STATS = [
-  { value: "169+", label: "Datasets" },
-  { value: "12", label: "Organisasi" },
-  { value: "50K+", label: "Downloads" },
+  { value: "40+", label: "Datasets" },
+  { value: "13+", label: "Organisasi" },
+  { value: "50+", label: "Downloads" },
 ];
 
 export const HeroStats = () => (

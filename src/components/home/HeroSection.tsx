@@ -2,11 +2,7 @@ import { useState } from "react";
 import { Search, ArrowRight } from "lucide-react";
 import { useHeroSearch } from "@/hooks/use-hero-search";
 import { HeroStats } from "./hero/HeroStats";
-import {
-  TapisPattern,
-  TapisBorder,
-  TapisStarDivider,
-} from "@/constant/motiftapis";
+import tapisBackground from "@/assets/images/Tumpal Tubaba copy.png";
 
 export function HeroSection() {
   const { query, setQuery, handleSearch } = useHeroSearch();
@@ -14,39 +10,31 @@ export function HeroSection() {
 
   return (
     <section className="relative bg-primary min-h-[80vh] flex items-center justify-center py-16 md:py-28 overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary to-primary" />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,168,76,0.08) 0%, transparent 70%)",
-          }}
-        />
-      </div>
 
-      {/* Dekorasi tapis */}
-      <TapisPattern />
-      <TapisBorder />
-      <TapisBorder flip />
-      <div className="absolute top-[18px] left-0 w-full h-px bg-secondary/20 z-10" />
-      <div className="absolute bottom-[18px] left-0 w-full h-px bg-secondary/20 z-10" />
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url(${tapisBackground})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.18,
+        }}
+      />
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: [
+            "radial-gradient(ellipse 120% 100% at 50% 50%, transparent 40%, rgba(107,30,42,0.7) 100%)",
+            "linear-gradient(to bottom, rgba(107,30,42,0.3) 0%, rgba(107,30,42,0.6) 60%, rgba(107,30,42,0.95) 100%)",
+            "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,168,76,0.08) 0%, transparent 70%)",
+          ].join(", "),
+        }}
+      />
 
-      {/* Konten */}
+      {/* ── Konten ── */}
       <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
         <div className="max-w-4xl w-full">
-          {/* Ornamen atas judul */}
-          {/* <div className="flex items-center justify-center gap-3 mb-4 opacity-60">
-            <div className="h-px w-16 bg-gradient-to-r from-transparent to-secondary" />
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <polygon
-                points="8,0 10,6 16,6 11,10 13,16 8,12 3,16 5,10 0,6 6,6"
-                fill="#C9A84C"
-              />
-            </svg>
-            <div className="h-px w-16 bg-gradient-to-l from-transparent to-secondary" />
-          </div> */}
-
           {/* Title */}
           <h1 className="text-4xl md:text-7xl text-white mb-6 leading-[1.1] tracking-tight font-bold">
             Satu Data <span className="text-secondary">Tubaba</span>
@@ -54,7 +42,9 @@ export function HeroSection() {
 
           {/* Description */}
           <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl font-medium mx-auto">
-            Portal Satu Data Indonesia Kabupaten Tulang Bawang Barat. Satu Data Tubaba mendukung pembangunan berbasis data akurat,transparan dan akuntabel
+            Portal Satu Data Indonesia Kabupaten Tulang Bawang Barat. Satu Data
+            Tubaba mendukung pembangunan berbasis data akurat, transparan dan
+            akuntabel
           </p>
 
           {/* ── Search Bar ── */}
@@ -80,7 +70,6 @@ export function HeroSection() {
                 />
               </div>
 
-              {/* Input */}
               <input
                 type="text"
                 placeholder="Cari dataset berdasarkan kata kunci..."
@@ -127,11 +116,6 @@ export function HeroSection() {
               Tekan Enter atau klik CARI untuk mencari dataset
             </p>
           </form>
-
-          {/* Divider bintang */}
-          {/* <div className="mt-10 mb-2">
-            <TapisStarDivider />
-          </div> */}
 
           {/* Statistics */}
           <div className="w-full flex justify-center">
