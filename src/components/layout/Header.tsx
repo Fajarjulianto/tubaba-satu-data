@@ -29,7 +29,9 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 md:gap-3 group">
           <div className="w-20 h-20 rounded-lg  flex items-center justify-center transition-colors">
                 <img
-                  src={tubabaLogo}
+                  // src={tubabaLogo}
+                  // src="/logotubabaputih.png"
+                  src="/tubabagold.png"
                   alt="Logo Tubaba"
                   className="w-12 h-12 object-contain"
                 />
