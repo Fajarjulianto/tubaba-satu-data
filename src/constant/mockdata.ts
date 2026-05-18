@@ -19,7 +19,6 @@ import {
   BarChart3,
   Globe,
   Wallet,
-  Info,
   BookOpenText,
 } from "lucide-react";
 
@@ -247,7 +246,7 @@ export const categories = [
   },
 ];
 
-export const categoriesExtra: typeof categories = [];
+
 
 export const metadataItems = [
   {

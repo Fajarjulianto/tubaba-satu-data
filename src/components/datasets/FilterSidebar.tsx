@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Filter, X } from "lucide-react";
 import {
   Sheet,
@@ -15,15 +15,15 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dataset } from "@/types";
 import { categories, TAHUN_OPTIONS } from "@/constant/mockdata";
-import { useState } from "react";
 
 interface FilterSidebarProps {
   allDatasets: Dataset[];
   selectedFilters: {
-    Category: string;  
+    Category: string;
     Year: string;
+    OPD: string;
   };
-  onFilterChange: (type: "Category" | "Year", value: string) => void;
+  onFilterChange: (type: "Category" | "Year" | "OPD", value: string) => void;
   onClearFilters: () => void;
 }
 
@@ -36,7 +36,7 @@ export function FilterSidebar({
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  // Hitung jumlah dataset per kategori secara real-time dari data CKAN
+  // Hitung jumlah dataset per kategori
   const categoryCountMap = useMemo(() => {
     const counts: Record<string, number> = {};
     allDatasets.forEach((d) => {
@@ -46,6 +46,20 @@ export function FilterSidebar({
     return counts;
   }, [allDatasets]);
 
+  // Derive daftar OPD unik dari data real + hitung jumlah dataset-nya
+  const opdList = useMemo(() => {
+    const countMap: Record<string, number> = {};
+    allDatasets.forEach((d) => {
+      const opd = d.agency || d.organization?.title || "";
+      if (!opd) return;
+      countMap[opd] = (countMap[opd] || 0) + 1;
+    });
+    return Object.entries(countMap)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count); // urutkan: terbanyak dulu
+  }, [allDatasets]);
+
+  // Derive tahun tersedia
   const availableYears = useMemo(() => {
     const yearSet = new Set<string>();
     allDatasets.forEach((d) => {
@@ -56,10 +70,17 @@ export function FilterSidebar({
     return Array.from(yearSet).sort((a, b) => Number(b) - Number(a));
   }, [allDatasets]);
 
-  const hasActiveFilters = !!selectedFilters.Category || !!selectedFilters.Year;
+  const activeFilterCount = [
+    selectedFilters.Category,
+    selectedFilters.Year,
+    selectedFilters.OPD,
+  ].filter(Boolean).length;
+
+  const hasActiveFilters = activeFilterCount > 0;
 
   const filterContent = (
     <div className="space-y-6">
+
       {/* ── Dropdown Kategori ── */}
       <div className="border-b border-border pb-5">
         <p className="font-bold text-xs uppercase tracking-widest text-slate-900 mb-3">
@@ -91,6 +112,52 @@ export function FilterSidebar({
             })}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* ── Dropdown OPD / Dinas ── */}
+      <div className="border-b border-border pb-5">
+        <p className="font-bold text-xs uppercase tracking-widest text-slate-900 mb-3">
+          Dinas / OPD
+        </p>
+        <Select
+          value={selectedFilters.OPD || "__all__"}
+          onValueChange={(val) =>
+            onFilterChange("OPD", val === "__all__" ? "" : val)
+          }
+        >
+          <SelectTrigger className="w-full bg-slate-50/50 text-sm">
+            <SelectValue placeholder="Semua Dinas / OPD" />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            <SelectItem value="__all__">Semua Dinas / OPD</SelectItem>
+            {opdList.map(({ name, count }) => (
+              <SelectItem key={name} value={name}>
+                <span className="flex items-center justify-between w-full gap-3">
+                  <span className="truncate">{name}</span>
+                  <span className="text-[10px] text-slate-400 shrink-0">
+                    ({count})
+                  </span>
+                </span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Badge OPD aktif */}
+        {selectedFilters.OPD && (
+          <div className="mt-2 flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/8 border border-primary/20 rounded-lg">
+            <span className="text-xs text-primary font-medium truncate flex-1">
+              {selectedFilters.OPD}
+            </span>
+            <button
+              onClick={() => onFilterChange("OPD", "")}
+              className="text-primary/60 hover:text-primary transition-colors shrink-0"
+              aria-label="Hapus filter OPD"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Dropdown Tahun ── */}
@@ -145,7 +212,7 @@ export function FilterSidebar({
             Filter Data
             {hasActiveFilters && (
               <span className="bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full ml-2">
-                {[selectedFilters.Category, selectedFilters.Year].filter(Boolean).length}
+                {activeFilterCount}
               </span>
             )}
           </Button>

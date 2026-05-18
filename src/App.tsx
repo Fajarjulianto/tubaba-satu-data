@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "./context/authContext";
+// import { AuthProvider } from "./context/authContext";
 import { LoadingScreen } from "./components/shared/loadingScreen";
 import { AnimatePresence } from "framer-motion";
 // Layouts & Guards
@@ -99,13 +99,13 @@ const AppRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
+      {/* <AuthProvider> */}
         <Suspense fallback={<LoadingScreen />}>
           <AppRoutes />
         </Suspense>
         <Toaster />
         <Sonner />
-      </AuthProvider>
+      {/* </AuthProvider> */}
     </TooltipProvider>
   </QueryClientProvider>
 );

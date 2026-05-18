@@ -13,7 +13,11 @@ import {
   Database,
   ExternalLink,
 } from "lucide-react";
-import { useFetchCkan, CKANdataItem } from "@/hooks/data/useFetchCkan";
+import { useFetchCkan } from "@/hooks/data/useFetchCkan";
+import {CKANdataItem} from "@/types/index"
+
+
+
 
 const ITEMS_PER_PAGE = 6;
 

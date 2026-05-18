@@ -51,7 +51,10 @@ type XlsxModule = {
     Sheets: Record<string, unknown>;
   };
   utils: {
-    sheet_to_json: <T>(sheet: unknown, opts?: { defval?: unknown }) => T[];
+    sheet_to_json: <T>(
+      sheet: unknown,
+      opts?: { defval?: unknown; header?: number | string[] | "A"; raw?: boolean }
+    ) => T[];
   };
 };
 
@@ -94,6 +97,60 @@ const buildFileUrl = (fileNameOrUrl?: string) => {
   return `${STORAGE_BASE_URL}/${fileNameOrUrl}`;
 };
 
+// ─── Helpers untuk deteksi header Excel ───────────────────────────────────────
+
+/**
+ * Hitung berapa kolom non-null/non-empty dalam satu raw row.
+ */
+const countFilledCells = (row: RawScalar[]): number =>
+  row.filter((cell) => cell !== null && cell !== undefined && String(cell).trim() !== "").length;
+
+/**
+ * Cek apakah row terlihat seperti baris header:
+ * - Mayoritas cell berisi string (bukan angka)
+ * - Tidak semua cell kosong
+ */
+const looksLikeHeader = (row: RawScalar[]): boolean => {
+  const filled = row.filter(
+    (cell) => cell !== null && cell !== undefined && String(cell).trim() !== ""
+  );
+  if (filled.length === 0) return false;
+  const stringCount = filled.filter((cell) => typeof cell === "string").length;
+  return stringCount / filled.length >= 0.5;
+};
+
+/**
+ * Temukan index baris header yang sesungguhnya dari raw array-of-arrays.
+ * Strategi:
+ * 1. Cari baris pertama yang looksLikeHeader DAN memiliki >= 2 filled cells
+ * 2. Jika baris 0 adalah judul panjang (1 cell terisi, sisanya kosong) → skip
+ * 3. Fallback ke baris 0 jika tidak ada kandidat yang lebih baik
+ */
+const findHeaderRowIndex = (rawRows: RawScalar[][]): number => {
+  for (let i = 0; i < Math.min(rawRows.length, 10); i++) {
+    const row = rawRows[i];
+    const filled = countFilledCells(row);
+    if (filled >= 2 && looksLikeHeader(row)) {
+      return i;
+    }
+  }
+  return 0;
+};
+
+/**
+ * Sanitasi nama kolom: hapus prefix _EMPTY, trim whitespace, fallback ke kolom_N
+ */
+const sanitizeColumnName = (raw: string, index: number): string => {
+  const trimmed = String(raw ?? "").trim();
+  if (!trimmed || trimmed.startsWith("_EMPTY") || trimmed === "__EMPTY") {
+    return `kolom_${index + 1}`;
+  }
+  // Ganti newline/multiple spaces dengan spasi tunggal (judul multiline di Excel)
+  return trimmed.replace(/\s+/g, " ");
+};
+
+// ─── Parser utama Excel ────────────────────────────────────────────────────────
+
 const parseExcelPreviewFromUrl = async (
   fileUrl?: string
 ): Promise<DatasetPreviewRow[]> => {
@@ -106,6 +163,7 @@ const parseExcelPreviewFromUrl = async (
       "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm"
     )) as { default?: XlsxModule; read?: XlsxModule["read"]; utils?: XlsxModule["utils"] };
     const XLSX = (mod.default ?? mod) as XlsxModule;
+
     const response = await fetch(fileUrl);
     if (!response.ok) return [];
     const arrayBuffer = await response.arrayBuffer();
@@ -113,10 +171,43 @@ const parseExcelPreviewFromUrl = async (
     const firstSheetName = workbook.SheetNames[0];
     if (!firstSheetName) return [];
     const worksheet = workbook.Sheets[firstSheetName];
-    const rows = XLSX.utils.sheet_to_json<Record<string, RawScalar>>(worksheet, {
+
+    // Step 1: Baca semua sebagai array-of-arrays (tanpa interpretasi header)
+    const rawGrid = XLSX.utils.sheet_to_json<RawScalar[]>(worksheet, {
+      header: 1,   // setiap baris = array mentah
       defval: null,
+      raw: false,  // konversi angka ke string agar lebih aman dideteksi
     });
-    return rows.map((row, idx) => ({ id: idx + 1, ...row }));
+
+    if (rawGrid.length === 0) return [];
+
+    // Step 2: Deteksi baris header yang sesungguhnya
+    const headerRowIdx = findHeaderRowIndex(rawGrid as RawScalar[][]);
+    const headerRow = rawGrid[headerRowIdx] as RawScalar[];
+    const headers = headerRow.map((cell, i) => sanitizeColumnName(String(cell ?? ""), i));
+
+    // Step 3: Baca baris data (setelah header), skip baris kosong
+    const dataRows: DatasetPreviewRow[] = [];
+    for (let i = headerRowIdx + 1; i < rawGrid.length; i++) {
+      const row = rawGrid[i] as RawScalar[];
+
+      // Skip baris yang semua kosong
+      if (countFilledCells(row) === 0) continue;
+
+      const mapped: DatasetPreviewRow = { id: dataRows.length + 1 };
+      headers.forEach((header, colIdx) => {
+        const cell = row[colIdx] ?? null;
+        // Parse angka kembali dari string jika memungkinkan
+        if (typeof cell === "string" && cell.trim() !== "" && !isNaN(Number(cell))) {
+          mapped[header] = Number(cell);
+        } else {
+          mapped[header] = cell;
+        }
+      });
+      dataRows.push(mapped);
+    }
+
+    return dataRows;
   } catch {
     return [];
   }

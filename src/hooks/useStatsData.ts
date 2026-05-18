@@ -54,10 +54,9 @@ const deriveBreakdown = (
 
 export const useStatsData = (): StatsData => {
   const { data, isLoading, isError, laravelCount, ckanCount } = useCombinedDatasets();
-
   const stats = useMemo<StatsData>(() => {
-    const laravelData = data.filter((d) => d.source === "laravel");
-    const ckanData = data.filter((d) => d.source === "ckan");
+  const laravelData = data.filter((d) => d.source === "laravel");
+  const ckanData = data.filter((d) => d.source === "ckan");
 
     return {
       all: deriveStats(data),

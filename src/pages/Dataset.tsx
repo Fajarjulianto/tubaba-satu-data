@@ -16,27 +16,37 @@ const Datasets = () => {
   const searchQuery    = searchParams.get("q")        || "";
   const categoryFilter = searchParams.get("category") || "";
   const yearFilter     = searchParams.get("year")     || "";
+  const opdFilter      = searchParams.get("opd")      || "";
   const currentPage    = parseInt(searchParams.get("page") || "1");
 
   const { data: datasets = [], isLoading } = useCombinedDatasets();
 
   const filteredDatasets = useMemo(() => {
     return datasets.filter((dataset) => {
+      // Search: title atau agency
       const matchesSearch =
         !searchQuery ||
         dataset.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         dataset.agency.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Filter kategori
       const datasetCategory = dataset.category || "Pemerintahan";
       const matchesCategory =
         !categoryFilter || datasetCategory === categoryFilter;
+
+      // Filter tahun
       const datasetYear = dataset.metadata?.publishedDate?.split("-")[0] || "";
       const matchesYear = !yearFilter || datasetYear === yearFilter;
 
-      return matchesSearch && matchesCategory && matchesYear;
+      // Filter OPD — cocokkan ke agency atau organization.title
+      const datasetOpd = dataset.agency || dataset.organization?.title || "";
+      const matchesOpd = !opdFilter || datasetOpd === opdFilter;
+
+      return matchesSearch && matchesCategory && matchesYear && matchesOpd;
     });
-  }, [datasets, searchQuery, categoryFilter, yearFilter]);
+  }, [datasets, searchQuery, categoryFilter, yearFilter, opdFilter]);
 
-
+  // Helper: update URLSearchParams, selalu reset ke page 1
   const updateParams = (newParams: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams);
     Object.entries(newParams).forEach(([key, value]) => {
@@ -67,10 +77,12 @@ const Datasets = () => {
             selectedFilters={{
               Category: categoryFilter,
               Year: yearFilter,
+              OPD: opdFilter,
             }}
             onFilterChange={(type, value) => {
               if (type === "Category") updateParams({ category: value || null });
               if (type === "Year")     updateParams({ year: value || null });
+              if (type === "OPD")      updateParams({ opd: value || null });
             }}
             onClearFilters={() => setSearchParams(new URLSearchParams())}
           />
