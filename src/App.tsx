@@ -18,6 +18,7 @@ const Dataset = lazy(() => import("./pages/Dataset"));
 const DatasetDetails = lazy(() => import("./pages/DatasetDetails"));
 const Statistik = lazy(() => import("./pages/Statistik"));
 const Metadata = lazy(() => import("./pages/Metadata"));
+const KetentuanPenggunaan = lazy(() => import("./pages/KetentuanPenggunaan"))
 // const Analisis = lazy(() => import("./pages/Analisis"));
 // const Dokumentasi = lazy(() => import("./pages/Dokumentasi"));
 // const Kontak = lazy(() => import("./pages/Kontak"));
@@ -41,6 +42,7 @@ const publicRoutes = [
   { path: "/datasets/:id", element: <DatasetDetails /> },
   { path: "/statistik", element: <Statistik /> },
   { path: "/metadata", element: <Metadata /> },
+  {path : "/ketentuan-penggunaan", element: <KetentuanPenggunaan/> },
   // { path: "/analisis", element: <Analisis /> },
   // { path: "/dokumentasi", element: <Dokumentasi /> },
   // { path: "/kontak", element: <Kontak /> },

@@ -38,11 +38,11 @@ const QUICK_LINKS: FooterLink[] = [
 ];
 
 const RESOURCES: FooterLink[] = [
-  { name: "API Documentation", href: "/dokumentasi" },
-  { name: "Data Standards", href: "/metadata" },
-  { name: "Open Data Policy", href: "#" },
-  { name: "Privacy Policy", href: "#" },
-  { name: "Terms of Service", href: "#" },
+  { name: "Dokumentasi API", href: "/dokumentasi" },
+  { name: "Panduan Penggunaan", href: "/metadata" },
+  { name: "Kebijakan Privasi", href: "#" },
+  { name: "Ketentuan Penggunaan", href: "/ketentuan-penggunaan" },
+  { name: "FAQ", href: "/FAQ" }
 ];
 
 const SOCIAL_LINKS: SocialLink[] = [
