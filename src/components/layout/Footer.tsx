@@ -40,7 +40,7 @@ const QUICK_LINKS: FooterLink[] = [
 const RESOURCES: FooterLink[] = [
   { name: "Dokumentasi API", href: "/dokumentasi" },
   { name: "Panduan Penggunaan", href: "/metadata" },
-  { name: "Kebijakan Privasi", href: "#" },
+  { name: "Kebijakan Privasi", href: "/kebijakan-privasi" },
   { name: "Ketentuan Penggunaan", href: "/ketentuan-penggunaan" },
   { name: "FAQ", href: "/FAQ" }
 ];
@@ -101,9 +101,11 @@ export function Footer() {
           {/* Brand & Sosial Media */}
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-11 h-11 rounded-xl bg-secondary/10 flex items-center justify-center transition-transform group-hover:scale-110">
-                <Database className="w-6 h-6 text-secondary" />
-              </div>
+                <img
+                alt="Logo Tubaba"
+                className="w-12 h-12 object-contain"
+                src="./tubabagold.png"
+                />
               <div className="leading-none">
                 <span className="block text-xl font-bold uppercase tracking-tighter text-white">
                   Satu Data <span className="text-secondary">Tubaba</span>

@@ -8,8 +8,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LoadingScreen } from "./components/shared/loadingScreen";
 import { AnimatePresence } from "framer-motion";
 // Layouts & Guards
-import { AdminLayout } from "./components/admin/AdminLayout";
-import { ProtectedRoute } from "./components/admin/ProtectedRoute";
+// import { AdminLayout } from "./components/admin/AdminLayout";
+// import { ProtectedRoute } from "./components/admin/ProtectedRoute";
 import { PageTransition } from "./components/shared/pageTransition";
 
 // Lazy Pages
@@ -17,16 +17,16 @@ const Home = lazy(() => import("./pages/Home"));
 const Dataset = lazy(() => import("./pages/Dataset"));
 const DatasetDetails = lazy(() => import("./pages/DatasetDetails"));
 const Statistik = lazy(() => import("./pages/Statistik"));
-const Metadata = lazy(() => import("./pages/Metadata"));
+// const Metadata = lazy(() => import("./pages/Metadata"));
 const KetentuanPenggunaan = lazy(() => import("./pages/KetentuanPenggunaan"))
-// const Analisis = lazy(() => import("./pages/Analisis"));
-// const Dokumentasi = lazy(() => import("./pages/Dokumentasi"));
-// const Kontak = lazy(() => import("./pages/Kontak"));
-// const Organisasi = lazy(() => import("./pages/Organisasi"));
+const PanduanPenggunaan = lazy(() => import("./pages/PanduanPenggunaan"));
+const Dokumentasi = lazy(() => import("./pages/Dokumentasi"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const KebijakanPrivasi = lazy(() => import("./pages/KebijakanPrivasi"));
 const LoginPage = lazy(() => import("./pages/login"));
-const Dashboard = lazy(() => import("./pages/admin/dashboard"));
-const UploadDataAdmin = lazy(() => import("./components/admin/UploadData"));
-const ManageDatasets = lazy(() => import("./components/admin/ManageDataset"));
+// const Dashboard = lazy(() => import("./pages/admin/dashboard"));
+// const UploadDataAdmin = lazy(() => import("./components/admin/UploadData"));
+// const ManageDatasets = lazy(() => import("./components/admin/ManageDataset"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -41,12 +41,12 @@ const publicRoutes = [
   { path: "/dataset", element: <Dataset /> },
   { path: "/datasets/:id", element: <DatasetDetails /> },
   { path: "/statistik", element: <Statistik /> },
-  { path: "/metadata", element: <Metadata /> },
+  // { path: "/metadata", element: <Metadata /> },
   {path : "/ketentuan-penggunaan", element: <KetentuanPenggunaan/> },
-  // { path: "/analisis", element: <Analisis /> },
-  // { path: "/dokumentasi", element: <Dokumentasi /> },
-  // { path: "/kontak", element: <Kontak /> },
-  // { path: "/organisasi", element: <Organisasi /> },
+  { path: "/panduan-penggunaan", element: <PanduanPenggunaan /> },
+  { path: "/dokumentasi", element: <Dokumentasi /> },
+  { path: "/FAQ", element: <FAQ /> },
+  { path: "/kebijakan-privasi", element: <KebijakanPrivasi /> },
   { path: "/login", element: <LoginPage /> },
 ];
 
@@ -65,7 +65,7 @@ const AppRoutes = () => {
           />
         ))}
 
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* <Route path="/admin" element={<AdminLayout />}>
           <Route
             index
             element={
@@ -73,16 +73,16 @@ const AppRoutes = () => {
                 <Dashboard />
               </PageTransition>
             }
-          />
-          <Route
+          /> */}
+          {/* <Route
             path="upload"
             element={
               <PageTransition>
                 <UploadDataAdmin />
               </PageTransition>
             }
-          />
-          <Route
+          /> */}
+          {/* <Route
             path="datasets"
             element={
               <PageTransition>
@@ -90,7 +90,7 @@ const AppRoutes = () => {
               </PageTransition>
             }
           />
-        </Route>
+        </Route> */}
 
         <Route path="*" element={<NotFound />} />
       </Routes>
