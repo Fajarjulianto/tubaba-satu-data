@@ -39,7 +39,7 @@ const QUICK_LINKS: FooterLink[] = [
 
 const RESOURCES: FooterLink[] = [
   { name: "Dokumentasi API", href: "/dokumentasi" },
-  { name: "Panduan Penggunaan", href: "/metadata" },
+  { name: "Panduan Penggunaan", href: "/panduan-penggunaan" },
   { name: "Kebijakan Privasi", href: "/kebijakan-privasi" },
   { name: "Ketentuan Penggunaan", href: "/ketentuan-penggunaan" },
   { name: "FAQ", href: "/FAQ" }
