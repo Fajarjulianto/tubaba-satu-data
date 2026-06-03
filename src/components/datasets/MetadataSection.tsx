@@ -1,4 +1,4 @@
-import { DatasetMetadata } from "../../types/dataset";
+import { DatasetMetadata } from "../../types/index";
 
 interface MetadataRowProps {
   label: string;
@@ -25,10 +25,7 @@ export function MetadataSection({ metadata }: { metadata: DatasetMetadata }) {
       <MetadataRow label="Level Akses" value={metadata.accessLevel} />
       <MetadataRow label="Diterbitkan Pada" value={metadata.publishedDate} />
       <MetadataRow label="Diperbaharui Pada" value={metadata.lastUpdated} />
-      <MetadataRow
-        label="Tingkat Penyajian"
-        value={metadata.presentationLevel}
-      />
+      <MetadataRow label="Tingkat Penyajian" value={metadata.presentationLevel}/>
       <MetadataRow label="Cakupan Dataset" value={metadata.coverage} />
       <MetadataRow label="Periode" value={metadata.period} />
       <MetadataRow label="Sumber" value={metadata.source} />

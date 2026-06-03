@@ -24,6 +24,7 @@ const Dokumentasi = lazy(() => import("./pages/Dokumentasi"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const KebijakanPrivasi = lazy(() => import("./pages/KebijakanPrivasi"));
 const LoginPage = lazy(() => import("./pages/login"));
+const Analisis = lazy(() => import("./pages/Analisis"));
 // const Dashboard = lazy(() => import("./pages/admin/dashboard"));
 // const UploadDataAdmin = lazy(() => import("./components/admin/UploadData"));
 // const ManageDatasets = lazy(() => import("./components/admin/ManageDataset"));
@@ -48,6 +49,7 @@ const publicRoutes = [
   { path: "/FAQ", element: <FAQ /> },
   { path: "/kebijakan-privasi", element: <KebijakanPrivasi /> },
   { path: "/login", element: <LoginPage /> },
+  { path: "/analisis", element: <Analisis /> },
 ];
 
 // Komponen terpisah agar useLocation bisa digunakan di dalam BrowserRouter

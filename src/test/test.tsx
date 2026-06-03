@@ -60,7 +60,7 @@ const TestPage = () => {
           Test Page
         </h1>
         <p className="mt-2 text-slate-500">
-          Status: {isFetching ? "🔄 Sinkronisasi..." : "✅ Terkoneksi"}
+          Status: {isFetching ? "Sinkronisasi..." : "Terkoneksi"}
         </p>
       </div>
 
