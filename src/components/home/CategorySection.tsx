@@ -10,14 +10,19 @@ export function CategorySection() {
   const { data: datasets = [], isLoading } = useCombinedDatasets();
 
   // Hitung jumlah dataset per kategori dari data CKAN
-  const countMap = useMemo(() => {
-    const map: Record<string, number> = {};
-    datasets.forEach((d) => {
-      const cat = d.category || "Pemerintahan";
-      map[cat] = (map[cat] || 0) + 1;
-    });
-    return map;
-  }, [datasets]);
+const countMap = useMemo(() => {
+  const counts: Record<string, number> = {};
+  
+  if (!datasets) return counts;
+
+  datasets.forEach((dataset) => {
+    const rawCategory = dataset.category || dataset.groups?.[0]?.display_name || "Lainnya";
+    const normalizedCategory = rawCategory.trim().toLowerCase();
+    counts[normalizedCategory] = (counts[normalizedCategory] || 0) + 1;
+  });
+
+  return counts;
+}, [datasets]);
 
   return (
     <section className="py-10 md:py-16 bg-background">
@@ -42,13 +47,16 @@ export function CategorySection() {
 
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.name}
-              category={category}
-              count={isLoading ? null : (countMap[category.name] ?? 0)}
-            />
-          ))}
+            {categories.map((category) => {
+              const safeSearchKey = category.name.trim().toLowerCase();
+              return (
+                <CategoryCard
+                  key={category.name}
+                  category={category}
+                  count={isLoading ? null : (countMap[safeSearchKey] ?? 0)} 
+                />
+              );
+            })}
         </div>
 
         <div className="flex justify-center mt-8">

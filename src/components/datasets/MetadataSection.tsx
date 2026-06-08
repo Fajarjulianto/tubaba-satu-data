@@ -23,7 +23,7 @@ export function MetadataSection({ metadata }: { metadata: DatasetMetadata }) {
       <MetadataRow label="Identifier" value={metadata.identifier} />
       <MetadataRow label="Lisensi" value={metadata.license} />
       <MetadataRow label="Level Akses" value={metadata.accessLevel} />
-      <MetadataRow label="Diterbitkan Pada" value={metadata.publishedDate} />
+      <MetadataRow label="Diterbitkan Pada" value={metadata.publishedDate} />  /// change to period ///
       <MetadataRow label="Diperbaharui Pada" value={metadata.lastUpdated} />
       <MetadataRow label="Tingkat Penyajian" value={metadata.presentationLevel}/>
       <MetadataRow label="Cakupan Dataset" value={metadata.coverage} />

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
-import { Dataset, ApiDatasetItem, CKANdataItem } from "@/types/index";
+import { Dataset, ApiDatasetItem, CKANdataItem, FileFormat } from "@/types/index";
 import { deriveCategory, deriveFileType } from "@/lib/utils";
 
 interface ApiOpdResponse {
@@ -10,6 +10,23 @@ interface ApiOpdResponse {
 interface ApiListResponse {
   data: ApiDatasetItem[];
 }
+
+
+const deriveCategoryFromTitle = (title: string): string => {
+  const t = title.toLowerCase();
+  if (t.includes("penduduk") || t.includes("kemiskinan") || t.includes("gender")) return "Kependudukan & Sosial";
+  if (t.includes("ekonomi") || t.includes("pdrb") || t.includes("inflasi")) return "Ekonomi & Perdagangan";
+  if (t.includes("tani") || t.includes("buah") || t.includes("panen") || t.includes("kebun")) return "Pertanian";
+  if (t.includes("sekolah") || t.includes("siswa") || t.includes("guru") || t.includes("pendidikan")) return "Pendidikan";
+  if (t.includes("sehat") || t.includes("puskesmas") || t.includes("sakit") || t.includes("medis")) return "Kesehatan";
+  if (t.includes("iklim") || t.includes("cuaca") || t.includes("hujan")) return "Lingkungan Hidup";
+  if (t.includes("transportasi") || t.includes("jalan") || t.includes("lalu lintas") || t.includes("kendaraan")) return "Transportasi";
+
+  return "Umum"; 
+};
+
+
+
 
 export const mapApiItemToDataset = (item: ApiDatasetItem): Dataset => ({
   id: item.id,
@@ -56,7 +73,15 @@ export const mapApiItemToDataset = (item: ApiDatasetItem): Dataset => ({
 });
 
 export const mapCkanToDataset = (item: CKANdataItem): Dataset => {
-  const firstResource = item.resources?.[0];
+ let derivedCategory = "Umum";
+  
+  if (item.tags && item.tags.length > 0) {
+    const firstTag = item.tags[0].display_name || item.tags[0].name;
+    derivedCategory = firstTag.charAt(0).toUpperCase() + firstTag.slice(1);
+  } else {
+    derivedCategory = deriveCategoryFromTitle(item.title);
+  }
+
   return {
     id: item.id,
     name: item.name,
@@ -64,14 +89,18 @@ export const mapCkanToDataset = (item: CKANdataItem): Dataset => {
     description: item.notes || `Dataset ${item.title}`,
     notes: item.notes || "",
     source: "ckan",
-    category: item.groups?.[0]?.display_name || "Umum",
-    agency: item.organization?.title || item.author || "CKAN",
+    category: derivedCategory,
+    agency: item.organization?.title || item.author,
     lastUpdated: item.metadata_modified?.split("T")[0] || "",
     datasetKode: item.name,
-    fileType: deriveFileType(firstResource?.name || firstResource?.format || "json"),
-    fileUrl: firstResource?.url || "",
+    fileType: (item.resources?.[0]?.format?.toUpperCase() || "XLSX") as FileFormat,
+    fileUrl: item.resources?.[0]?.url || "",
     resources: item.resources || [],
-    groups: item.groups || [],
+    groups: [{
+      id: derivedCategory.toLowerCase().replace(/\s+/g, '-'),
+      name: derivedCategory.toLowerCase().replace(/\s+/g, '-'),
+      display_name: derivedCategory
+    }],
     organization: item.organization,
     downloads: 0,
     views: 0,
@@ -81,14 +110,14 @@ export const mapCkanToDataset = (item: CKANdataItem): Dataset => {
     tags: item.tags || [],
     author: item.author,
     metadata: {
-      publisher: item.organization?.title || item.author || "CKAN",
+      publisher: item.organization?.title || item.author,
       identifier: item.name,
       license: item.license_title || "Open Data",
       accessLevel: "Public",
       publishedDate: item.metadata_created?.split("T")[0] || "",
       lastUpdated: item.metadata_modified?.split("T")[0] || "",
       period: "",
-      source: firstResource?.url || "",
+      source: item.resources?.[0]?.url || "",
     },
     previewData: [],
   };

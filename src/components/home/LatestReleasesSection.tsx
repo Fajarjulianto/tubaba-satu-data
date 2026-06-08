@@ -159,7 +159,7 @@ export function LatestReleasesSection() {
                               : "bg-blue-50 text-blue-700 border-blue-200"
                           }`}
                         >
-                          {release.source === "ckan" ? "BPS/CKAN" : "OPD"}
+                          {release.source === "OPD" ? "OPD" : "CKAN"}
                         </span>
                       </div>
                     </div>

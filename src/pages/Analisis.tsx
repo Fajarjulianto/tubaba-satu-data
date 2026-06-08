@@ -118,7 +118,7 @@ function SummaryCard({ icon: Icon, label, value, sub, trend, color = PRIMARY, lo
   );
 }
 
-// ─── Sub: Section Header ───────────────
+// ─── Sub: Section Header ─────────
 function SectionHeader({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="mb-5">
@@ -128,7 +128,7 @@ function SectionHeader({ title, sub }: { title: string; sub?: string }) {
   );
 }
 
-// ─── Halaman Utama ───────────────────────
+// ─── Halaman Utama ─────────────
 
 const Analysis = () => {
   const { data: datasets = [], isLoading, laravelCount, ckanCount } = useCombinedDatasets();
@@ -336,7 +336,7 @@ const Analysis = () => {
           </div>
         </section>
 
-        {/* ── Row 2: Pie Kategori + Radar ────────────────────────────────── */}
+        {/* ── Row 2: Pie Kategori + Radar ───────────*/}
         <section className="grid lg:grid-cols-2 gap-4 md:gap-6">
 
           {/* Pie Kategori */}
