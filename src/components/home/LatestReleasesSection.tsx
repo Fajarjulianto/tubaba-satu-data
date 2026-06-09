@@ -151,7 +151,7 @@ export function LatestReleasesSection() {
                           {release.category}
                         </Badge>
                         {/* Badge sumber data */}
-                        <span
+                        {/* <span
                           className={`hidden sm:inline-flex text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${
                             release.source === "ckan"
                               ? "bg-emerald-50 text-emerald-700 border-emerald-200"
@@ -159,7 +159,7 @@ export function LatestReleasesSection() {
                           }`}
                         >
                           {release.source === "OPD" ? "OPD" : "CKAN"}
-                        </span>
+                        </span> */}
                       </div>
                     </div>
 
