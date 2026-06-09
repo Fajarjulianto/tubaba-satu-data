@@ -104,7 +104,7 @@ export function Footer() {
                 <img
                 alt="Logo Tubaba"
                 className="w-12 h-12 object-contain"
-                src="./tubabagold.png"
+                src="/tubabagold.png"
                 />
               <div className="leading-none">
                 <span className="block text-xl font-bold uppercase tracking-tighter text-white">

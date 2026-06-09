@@ -12,7 +12,7 @@ import { Badge, Button } from "@/components/index";
 import { useCombinedDatasets } from "@/hooks/data/useCombinedDataset";
 import { Dataset } from "@/types";
 
-// ─── Konstanta ─────────────────────────────────────────────────────────────────
+// ─── Konstanta ──────────────
 
 const MAX_ITEMS = 5;
 
@@ -24,7 +24,7 @@ const FILE_TYPE_ICONS: Record<string, typeof FileSpreadsheet> = {
   PDF: FileText,
 };
 
-// ─── Helpers ───────────────────────────────────────────────────────────────────
+// ─── Helpers ────────────────
 
 const formatDate = (dateStr: string): string => {
   if (!dateStr) return "—";
@@ -58,7 +58,7 @@ const buildDetailPath = (dataset: Dataset): string => {
   return `/datasets/${dataset.id}?opd=${opd}&source=${dataset.source}`;
 };
 
-// ─── Komponen Utama ────────────────────────────────────────────────────────────
+// ─── Komponen Utama ──────────
 
 export function LatestReleasesSection() {
   const { data: datasets = [], isLoading } = useCombinedDatasets();
@@ -123,7 +123,6 @@ export function LatestReleasesSection() {
                   release.lastUpdated ||
                   ""
                 );
-
                 return (
                   <Link
                     key={release.id}
