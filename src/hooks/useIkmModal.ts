@@ -1,16 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
-
+import axios from "axios";
 
 const IKM_STORAGE_KEY = "ikm_tubaba_submitted";
 const IKM_DELAY_MS = 10_000; 
-
-// ─── Types ──────────────
 
 export interface IKMFormData {
   kepuasan: 1 | 2 | 3 | 4 | 5;
   usia: string;
   jenisKelamin: "laki-laki" | "perempuan" | "";
-  kabupaten: string;
+  kecamatan: string;
   submittedAt: string;
   checksum: string;
 }
@@ -21,13 +19,11 @@ export interface UseIKMModalReturn {
   hasSubmitted: boolean;
   close: () => void;
   dismiss: () => void;
-  submit: (data: Omit<IKMFormData, "submittedAt" | "checksum">) => void;
+  submit: (formData: Omit<IKMFormData, "submittedAt" | "checksum">) => Promise<void>;
 }
 
-
-
 const generateChecksum = (data: Omit<IKMFormData, "checksum">): string => {
-  const str = `${data.kepuasan}|${data.usia}|${data.jenisKelamin}|${data.kabupaten}|${data.submittedAt}`;
+  const str = `${data.kepuasan}|${data.usia}|${data.jenisKelamin}|${data.kecamatan}|${data.submittedAt}`;
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
@@ -36,7 +32,6 @@ const generateChecksum = (data: Omit<IKMFormData, "checksum">): string => {
   }
   return Math.abs(hash).toString(36);
 };
-
 
 const verifyStoredData = (): boolean => {
   try {
@@ -51,54 +46,71 @@ const verifyStoredData = (): boolean => {
   }
 };
 
-// ─── Hook ───────────
-
 export const useIKMModal = (): UseIKMModalReturn => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
-  const hasSubmitted = verifyStoredData();
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
-    // Jangan tampilkan jika sudah pernah submit (data valid di localStorage)
-    if (hasSubmitted) return;
+    setHasSubmitted(verifyStoredData());
+  }, []);
 
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, IKM_DELAY_MS);
-
+  useEffect(() => {
+    if (hasSubmitted || isDismissed) return;
+    const timer = setTimeout(() => { setIsOpen(true); }, IKM_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [hasSubmitted]);
+  }, [hasSubmitted, isDismissed]);
 
-  const close = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
-  const dismiss = useCallback(() => {
-    setIsOpen(false);
-    setIsDismissed(true);
-  }, []);
+  const close = useCallback(() => { setIsOpen(false); }, []);
+  const dismiss = useCallback(() => { setIsOpen(false); setIsDismissed(true); }, []);
 
   const submit = useCallback(
-    (formData: Omit<IKMFormData, "submittedAt" | "checksum">) => {
-      // Sanitasi input sebelum simpan
+    async (formData: Omit<IKMFormData, "submittedAt" | "checksum">) => {
       const sanitized = {
         kepuasan: formData.kepuasan,
-        usia: String(formData.usia).trim().slice(0, 3),
+        usia: String(formData.usia).trim().slice(0, 30), 
         jenisKelamin: formData.jenisKelamin,
-        kabupaten: String(formData.kabupaten)
-          .trim()
-          .replace(/[<>'"]/g, "")
-          .slice(0, 100),
+        kecamatan: String(formData.kecamatan).trim().replace(/[<>'"]/g, "").slice(0, 100),
         submittedAt: new Date().toISOString(),
       };
+
+
+      const googleFormResponseUrl = import.meta.env.VITE_IKM_SUBMIT_URL;
+      
+      if (googleFormResponseUrl) {
+        try {
+
+          const formPayload = new URLSearchParams();
+          
+          formPayload.append("entry.1010013709", sanitized.kecamatan);
+          formPayload.append("entry.1150122977", sanitized.kepuasan.toString());
+          formPayload.append("entry.1707248885", sanitized.submittedAt);
+          formPayload.append("entry.1737885289", sanitized.usia); 
+          formPayload.append("entry.635412615", sanitized.jenisKelamin);
+
+          await axios.post(googleFormResponseUrl, formPayload, {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          });
+        } catch (error) {
+            if (axios.isAxiosError(error) && (error.response?.status === 200 || error.code === "ERR_NETWORK")) {
+              console.log("Data berhasil disinkronisasi ke Google Form.");
+            } else {
+              console.error("Gagal sinkronisasi data ke Google Form", error);
+              throw new Error("Network error");
+            }
+          }
+      }
 
       const checksum = generateChecksum(sanitized);
       const fullData: IKMFormData = { ...sanitized, checksum };
 
       try {
         localStorage.setItem(IKM_STORAGE_KEY, JSON.stringify(fullData));
+        setHasSubmitted(true);
       } catch {
-        // localStorage penuh atau disabled — tetap close modal
+        // Fallback
       }
 
       setIsOpen(false);

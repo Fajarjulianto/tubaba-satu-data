@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useIKMModal } from "@/hooks/useIkmModal";
 
-// ─── Data ──────────
+// ─── Data Options ──────────
 
 const KEPUASAN_OPTIONS = [
   { value: 1, label: "Sangat Tidak Puas", emoji: "😞" },
@@ -28,26 +28,20 @@ const USIA_OPTIONS = [
   "> 55 tahun",
 ];
 
-const KABUPATEN_OPTIONS = [
-  "Tulang Bawang Barat",
-  "Bandar Lampung",
-  "Metro",
-  "Lampung Selatan",
-  "Lampung Tengah",
-  "Lampung Utara",
-  "Lampung Barat",
-  "Lampung Timur",
-  "Mesuji",
-  "Pesawaran",
-  "Pesisir Barat",
-  "Pringsewu",
-  "Tanggamus",
-  "Tulang Bawang",
-  "Way Kanan",
-  "Luar Provinsi Lampung",
+
+const KECAMATAN_OPTIONS = [
+  "Tulang Bawang Tengah",
+  "Tulang Bawang Udik",
+  "Tumijajar",
+  "Way Kenanga",
+  "Lambu Kibang",
+  "Gunung Agung",
+  "Pagar Dewa",
+  "Batu Putih",
+  "Gunung Terang",
+  "Luar Kabupaten Tubaba"
 ];
 
-// ─── Sub-komponen: Star Rating ───────────
 interface StarRatingProps {
   value: number;
   onChange: (val: 1 | 2 | 3 | 4 | 5) => void;
@@ -159,7 +153,7 @@ function SuccessView({ onClose }: { onClose: () => void }) {
         </h3>
         <p className="text-sm text-slate-500 leading-relaxed">
           Penilaian Anda telah kami terima dan akan digunakan untuk meningkatkan
-          layanan Satu Data Tubaba.
+          layanan portal Satu Data Tubaba.
         </p>
       </div>
       <button
@@ -182,7 +176,7 @@ export function IKMModal() {
   const [kepuasan, setKepuasan] = useState<1 | 2 | 3 | 4 | 5 | 0>(0);
   const [usia, setUsia] = useState("");
   const [jenisKelamin, setJenisKelamin] = useState("");
-  const [kabupaten, setKabupaten] = useState("");
+  const [kecamatan, setKecamatan] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -190,7 +184,7 @@ export function IKMModal() {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Focus trap + ESC + scroll lock
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -200,6 +194,7 @@ export function IKMModal() {
         const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
           'button:not([disabled]), select, input, [tabindex]:not([tabindex="-1"])'
         );
+        if (focusable.length === 0) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
         if (e.shiftKey && document.activeElement === first) {
@@ -228,23 +223,27 @@ export function IKMModal() {
       setError("Mohon berikan penilaian kepuasan Anda.");
       return;
     }
-    if (!usia || !jenisKelamin || !kabupaten) {
+    if (!usia || !jenisKelamin || !kecamatan) {
       setError("Mohon lengkapi semua field yang wajib diisi.");
       return;
     }
 
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 600));
-
-    submit({
-      kepuasan: kepuasan as 1 | 2 | 3 | 4 | 5,
-      usia,
-      jenisKelamin: jenisKelamin as "laki-laki" | "perempuan",
-      kabupaten,
-    });
-
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    
+    try {
+      await submit({
+        kepuasan: kepuasan as 1 | 2 | 3 | 4 | 5,
+        usia,
+        jenisKelamin: jenisKelamin as "laki-laki" | "perempuan",
+        kecamatan,
+      });
+      
+      setIsSuccess(true);
+    } catch (err) {
+      setError("Gagal mengirim data. Silakan coba beberapa saat lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -258,11 +257,7 @@ export function IKMModal() {
         aria-hidden="true"
       />
 
-      {/*
-        Layout wrapper:
-        - Mobile  : menempel di bawah layar (bottom-sheet)
-        - Desktop : terpusat di tengah layar
-      */}
+      {/* Layout wrapper */}
       <div
         ref={dialogRef}
         role="dialog"
@@ -270,20 +265,15 @@ export function IKMModal() {
         aria-labelledby="ikm-title"
         className="
           fixed z-50 pointer-events-none
-          /* Mobile: full-width, bottom */
           inset-x-0 bottom-0
-          /* Desktop: centered */
           sm:inset-0 sm:flex sm:items-center sm:justify-center sm:p-4
         "
       >
         <div
           className="
             relative w-full pointer-events-auto bg-white overflow-hidden
-            /* Mobile: top corners, max 92% viewport height */
             rounded-t-3xl max-h-[92dvh]
-            /* Desktop: fully rounded card, max-width, shadow */
             sm:rounded-3xl sm:max-w-md sm:max-h-[90vh] sm:w-full sm:shadow-2xl
-            /* Animasi */
             animate-in slide-in-from-bottom duration-300
             sm:slide-in-from-bottom-0 sm:zoom-in-95
           "
@@ -293,6 +283,7 @@ export function IKMModal() {
           <div className="sm:hidden flex justify-center pt-3 pb-0.5 shrink-0">
             <div className="w-10 h-1 rounded-full bg-slate-200" />
           </div>
+          
           <div className="relative bg-[#6D2323] px-5 sm:px-6 pt-4 sm:pt-6 pb-7 sm:pb-8 shrink-0">
             {/* Dekorasi lingkaran */}
             <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none">
@@ -334,7 +325,8 @@ export function IKMModal() {
           {/* Notch transition */}
           <div className="h-4 bg-[#6D2323] relative shrink-0">
             <div className="absolute inset-x-0 bottom-0 h-4 bg-white rounded-t-3xl" />
-          </div>S
+          </div>
+
           <div
             className="overflow-y-auto overscroll-contain px-5 sm:px-6 pb-6"
             style={{ maxHeight: "calc(92dvh - 140px)" }}
@@ -394,35 +386,32 @@ export function IKMModal() {
                   </div>
                 </div>
 
-                {/* Kabupaten */}
+      
                 <SelectField
-                  id="ikm-kabupaten"
-                  label="Alamat Kabupaten/Kota"
-                  value={kabupaten}
-                  options={KABUPATEN_OPTIONS}
-                  placeholder="Pilih kabupaten/kota"
-                  onChange={setKabupaten}
+                  id="ikm-kecamatan"
+                  label="Wilayah Kecamatan"
+                  value={kecamatan}
+                  options={KECAMATAN_OPTIONS}
+                  placeholder="Pilih wilayah kecamatan"
+                  onChange={setKecamatan}
                   required
                 />
 
-                {/* Error */}
+                {/* Error Display */}
                 {error && (
                   <p className="text-xs text-rose-600 font-medium animate-in fade-in duration-150">
                     {error}
                   </p>
                 )}
 
-                {/* Notis privasi */}
                 <div className="flex items-start gap-2 bg-slate-50 rounded-xl p-3 border border-slate-100">
                   <Shield className="w-4 h-4 text-[#6D2323] shrink-0 mt-0.5" />
                   <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed">
-                    Data Anda disimpan secara anonim di perangkat ini dan{" "}
-                    <strong className="text-slate-600">tidak dikirim ke server manapun</strong>.
-                    Digunakan hanya untuk keperluan evaluasi internal layanan.
+                    Data penilaian Anda disimpan secara <strong className="text-slate-600">anonim</strong> demi keamanan privasi. Partisipasi Anda sangat berharga untuk akumulasi rekam Indeks Kepuasan Terpadu Kabupaten.
                   </p>
                 </div>
 
-                {/* Submit */}
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -435,11 +424,12 @@ export function IKMModal() {
                   "
                 >
                   {isSubmitting ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...</>
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Mengirim data...</>
                   ) : (
                     "Kirim Penilaian"
                   )}
                 </button>
+                
                 <button
                   type="button"
                   onClick={dismiss}

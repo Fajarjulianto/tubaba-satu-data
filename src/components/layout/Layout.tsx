@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { IKMModal } from "@/components/ikmModal";
+// import { IKMModal } from "@/components/ikmModal";
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ export function Layout({ children }: LayoutProps) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-      <IKMModal />
+      {/* <IKMModal /> */}
     </div>
   );
 }
